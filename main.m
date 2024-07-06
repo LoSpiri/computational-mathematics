@@ -1,4 +1,21 @@
+clear variables;
+
 addpath("activation_functions")
+addpath("datasets\*")
+addpath("utils")
+
+% Definisci i nomi dei file
+monks1_train_filename = 'datasets/monks/monks-1.train';
+monks1_test_filename = 'datasets/monks/monks-1.test';
+monks2_train_filename = 'datasets/monks/monks-2.train';
+monks2_test_filename = 'datasets/monks/monks-2.test';
+monks3_train_filename = 'datasets/monks/monks-3.train';
+monks3_test_filename = 'datasets/monks/monks-3.test';
+
+% Carica i dataset usando la funzione load_datasets_monks
+[monks1_x_train, monks1_y_train, monks1_x_test, monks1_y_test] = load_datasets_monks(monks1_train_filename, monks1_test_filename);
+[monks2_x_train, monks2_y_train, monks2_x_test, monks2_y_test] = load_datasets_monks(monks2_train_filename, monks2_test_filename);
+[monks3_x_train, monks3_y_train, monks3_x_test, monks3_y_test] = load_datasets_monks(monks3_train_filename, monks3_test_filename);
 
 % Definizione del vettore trasposto x
 x = [1; 2; 3];  % Vettore colonna
