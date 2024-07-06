@@ -1,3 +1,5 @@
+addpath("activation_functions")
+
 % Definizione del vettore trasposto x
 x = [1; 2; 3];  % Vettore colonna
 
