@@ -2,7 +2,9 @@
 addpath("activation_functions")
 
 % Random matrix columns
-W1_c = [16 42 100];
+% This corresponds to W1_c and W2_r
+k = [16 42 100];
+random_state = 42;
 
 % Activation functions to test
 activation_functions = {@identity, @sigmoid, @relu, @tanh};

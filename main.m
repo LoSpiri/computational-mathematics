@@ -5,6 +5,7 @@ addpath("utils")
 addpath("const")
 
 config;
+rng(random_state);
 
 % Definisci i nomi dei file
 monks1_train_filename = 'datasets/monks/monks-1.train';
@@ -34,7 +35,7 @@ cup_filename = 'datasets/cup/ml-cup.csv';
 % Grid search parameters
 activation_functions;
 activation_functions_names;
-W1_c;
+k;
 
 % Store grid search results
 num_combinations = length(activation_functions) * length(W1_c);
@@ -44,14 +45,20 @@ results = cell(num_combinations, 3);
 index = 1;
 
 % Matrix to test
-
+% TODO Testing iteratively
 X = monks1_x_train;
+Y = monks1_x_test;
+[X_r, X_c] = size(X);
+[Y_r, Y_c] = size(Y);
+
+W2 = randn(k, Y_c);
+
+DeflectedSubgradient(W2, )
 
 for i = 1:length(activation_functions)
-    for w1_c = W1_c
+    for w1_c = k
         activation_function = activation_functions{i};
         activation_function_name = activation_functions_names{i};
-        [X_r, X_c] = size(X);
 
         % Start timer
         tic;
@@ -59,13 +66,13 @@ for i = 1:length(activation_functions)
         % Initialize NN
         nn = NeuralNetwork(X_c, w1_c);
         % Perform the forward pass
-        output = nn.activate(X, activation_function);
+        U = nn.activate(X, activation_function);
 
         elapsed_time = toc;
         % Stopped timer
         
-        % Display output
-        % disp_partial(output, "output", 5)
+        % Display U
+        % disp_partial(U, "U", 5)
 
         % Store results in cell array
         results{index, 1} = activation_function_name;
@@ -79,14 +86,12 @@ end
 sorted_results = sort_cell_matrix_by_column(results, 3, false);
 disp(sorted_results)
 
-% Prendo monks1_x_train, monks1_y_train
-% Aggiungerò una colonna di 1 a x_train e creerò la matrice randomica W1
-% con bh riga in fondo
-% Volendo richiamo tutto z
-% Applico funzioni di attivazione a z e lo chiamo u
-%
-%
-% (da mettere dopo) A u aggiungo una riga finale di 1 e moltiplico per W2 + b0 e lo chiamo y
-%
-%
+
+
 % Metodi di ottimizzazione:
+% 
+%
+%
+%
+%
+%
