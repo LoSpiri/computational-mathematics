@@ -33,6 +33,7 @@ classdef DeflectedSubgradient
             f_bar = obj.f_ref;
             f_x = obj.f_ref;
             r = 0;
+            x_i = obj.W2;
             for i = 1:obj.max_iter
                 g_i = obj.compute_subgradient();
                 % -- stopping criteria --
@@ -46,11 +47,15 @@ classdef DeflectedSubgradient
                     d_i = g_i;
                 else
                     gamma_i = obj.update_gamma(g_i, d_i);
+                    %
+                    disp(gamma_i);
                     % TODO beta_i func
                     beta_i = gamma_i;
                     d_i = gamma_i * g_i + (1 - gamma_i) * d_i;
                 end
                 alpha_i = obj.update_alpha(beta_i, f_x, d_i);
+                %
+                disp(alpha_i);
                 x_i = x_i - alpha_i * d_i;
                 f_x = obj.compute_f(x_i);
                 f_bar = min(f_bar, f_x);
@@ -65,6 +70,9 @@ classdef DeflectedSubgradient
                     r = r + alpha_i * sqrt(frobenius_norm_squared(d_i));
                 end
                 status = 'stopped';
+                % fprintf('g_i is %g.\n', g_i);
+                % fprintf('d_i is %d.\n', d_i);
+                % fprintf('x_i is %x.\n', x_i);
             end
             x_opt = x_i;
         end
@@ -114,6 +122,12 @@ classdef DeflectedSubgradient
             % Calcola il subgradiente g
             g = grad_Lm + obj.lambda * grad_L1;
         end
+
+        function alpha_i = update_alpha(obj, beta_i, f_x, d_i)
+            norm_d_i = frobenius_norm_squared(d_i);
+            num = f_x - obj.f_ref + obj.delta;
+            alpha_i = beta_i * (num / norm_d_i);
+        end
     end
 
     methods (Static, Access = private)
@@ -132,12 +146,6 @@ classdef DeflectedSubgradient
             gamma_i = max(0, min(1, gamma_i));
 
             %TODO Put warning with check gamma (0,1)
-        end
-
-        function alpha_i = update_alpha(beta_i, f_x, d_i)
-            norm_d_i = frobenius_norm_squared(d_i);
-            num = f_x - obj.f_ref + obj.delta;
-            alpha_i = beta_i * (num / norm_d_i);
         end
     end
 
