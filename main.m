@@ -4,6 +4,8 @@ addpath("activation_functions")
 addpath("utils")
 addpath("const")
 
+% TODO logger
+
 config;
 rng(random_state);
 
@@ -47,7 +49,7 @@ index = 1;
 % Matrix to test
 % TODO Testing iteratively
 X = monks1_x_train;
-Y = monks1_x_test;
+Y = monks1_y_train;
 [X_r, X_c] = size(X);
 [Y_r, Y_c] = size(Y);
 

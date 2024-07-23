@@ -130,6 +130,8 @@ classdef DeflectedSubgradient
 
             % Assicurati che gamma_i sia nell'intervallo (0, 1)
             gamma_i = max(0, min(1, gamma_i));
+
+            %TODO Put warning with check gamma (0,1)
         end
 
         function alpha_i = update_alpha(beta_i, f_x, d_i)
