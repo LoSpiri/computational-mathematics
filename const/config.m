@@ -19,8 +19,8 @@ activation_functions_names = {'tanh'};
 % max_iter = 1000;
 % lambda = [1e-3 1e-4 1e-5];
 
-delta = [0.5];
-rho = [0.9];
-R = [50];
-max_iter = 16;
+delta = [0.01];
+rho = [0.95];
+R = [5];
+max_iter = 1000;
 lambda = [1e-4];
