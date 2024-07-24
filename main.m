@@ -75,13 +75,13 @@ for i = 1:length(activation_functions)
                     
                     % Display U
                     % disp_partial(U, "U", 5)
-                    ds = DeflectedSubgradient(W2, delta, rho, R, max_iter, U, Y, lambda);
+                    ds = DeflectedSubgradient2(W2, delta, rho, R, max_iter, U, Y, lambda, 2);
                     [x_opt, status] = ds.compute_deflected_subgradient();
                     disp(x_opt);
                     disp(status);
 
                     % Evaluation
-                    eval = norm(U * x_opt - Y, 'fro');
+                    eval =  norm(U * x_opt - Y, 'fro') / (2 * X_r) + lambda * norm(x_opt, 1);
                     disp_partial(eval, "evaluation", 5);
                     disp_partial(U * x_opt, "U * x_opt", 10);
                     disp_partial(Y, "Y", 10);

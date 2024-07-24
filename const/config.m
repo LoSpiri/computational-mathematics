@@ -22,5 +22,5 @@ activation_functions_names = {'tanh'};
 delta = [0.01];
 rho = [0.95];
 R = [5];
-max_iter = 1000;
+max_iter = 100;
 lambda = [1e-4];
