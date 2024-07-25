@@ -5,14 +5,20 @@ classdef CholeskyLeastSquares
         R % Upper triangular matrix from Cholesky decomposition
         AtA % A transpose times A
         AtB % A transpose times B
+        N %Number of rows of U
+        lambda %Regularization Term
     end
     
     methods
-        function obj = CholeskyLeastSquares(A, B)
-            obj.A = A;
-            obj.B = B;
-            obj.AtA = A' * A;
-            obj.AtB = A' * B;
+        function obj = CholeskyLeastSquares(U, D, lambda)
+            obj.N = size(U, 1);
+            obj.lambda=lambda;
+            I=eye(size(U,2));
+            I=2*obj.N*obj.lambda*I;
+            obj.A = [U; I];
+            obj.B = [D; zeros(size(U,2), size(D,2))];
+            obj.AtA = (obj.A)' * obj.A;
+            obj.AtB = (obj.A)' * obj.B;
         end
         
         function obj = computeCholesky(obj)
@@ -64,12 +70,12 @@ classdef CholeskyLeastSquares
                 x(i, :) = (y(i, :) - U(i, i+1:n) * x(i+1:n, :)) / U(i, i);
             end
         end
-        
-        function evaluateResult(obj, x_opt, N)
+
+        function evaluateResult(obj, x_opt)
             % Evaluate the result and print the objective function value
             residual = obj.A * x_opt - obj.B;
             frob_norm_squared = sum(sum(residual.^2));
-            objective_value = (1 / (2 * N)) * frob_norm_squared;
+            objective_value = (1 / (2 * obj.N)) * frob_norm_squared;
             fprintf('Objective function value: %f\n', objective_value);
         end
     end
