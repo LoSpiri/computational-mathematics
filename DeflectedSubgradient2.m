@@ -56,7 +56,7 @@ classdef DeflectedSubgradient2
                     beta_i = 1;
                     d_i = g_i;
                 else
-                    gamma_i = obj.update_gamma(g_i, d_i, i);
+                    gamma_i = obj.update_gamma(g_i, d_i);
                     gamma_values = [gamma_values; gamma_i];
                     %
                     disp(gamma_i);
@@ -207,7 +207,7 @@ classdef DeflectedSubgradient2
             %TODO Put warning with check gamma (0,1)
         end
 
-        function gamma_i = update_gamma3(g_i, d_i)
+        function gamma_i = update_gamma(g_i, d_i)
             % Calcola la norma 2 di g_i e d_i
             norm_g_i = frobenius_norm_squared(g_i);
             norm_d_i = frobenius_norm_squared(d_i);
@@ -228,9 +228,6 @@ classdef DeflectedSubgradient2
             %TODO Put warning with check gamma (0,1)
         end
 
-        function gamma_i = update_gamma(g_i, d_i, iter)
-            gamma_i = 1 - 1 / (iter + 1);
-        end
     end
 
 end

@@ -64,5 +64,13 @@ classdef CholeskyLeastSquares
                 x(i, :) = (y(i, :) - U(i, i+1:n) * x(i+1:n, :)) / U(i, i);
             end
         end
+        
+        function evaluateResult(obj, x_opt, N)
+            % Evaluate the result and print the objective function value
+            residual = obj.A * x_opt - obj.B;
+            frob_norm_squared = sum(sum(residual.^2));
+            objective_value = (1 / (2 * N)) * frob_norm_squared;
+            fprintf('Objective function value: %f\n', objective_value);
+        end
     end
 end
