@@ -1,18 +1,24 @@
 classdef CholeskyLeastSquares
     properties
+        N % Number of input rows
+        lambda % Regularization Term
         A % Coefficient matrix
         B % Right-hand side matrix
         R % Upper triangular matrix from Cholesky decomposition
         AtA % A transpose times A
         AtB % A transpose times B
-        N %Number of rows of U
-        lambda %Regularization Term
+        ComputeCholeskyTime % Time taken to compute Cholesky decomposition
+        SolveTime % Time taken to solve the system
     end
     
     methods
         function obj = CholeskyLeastSquares(U, D, lambda)
+            % Constructor for CholeskyLeastSquares class
+            % Initializes matrices A, B, AtA, and AtB with regularization term
+            
             obj.N = size(U, 1);
             obj.lambda=lambda;
+
             I=eye(size(U,2));
             I=2*obj.N*obj.lambda*I;
             obj.A = [U; I];
@@ -23,6 +29,8 @@ classdef CholeskyLeastSquares
         
         function obj = computeCholesky(obj)
             % Perform manual Cholesky decomposition of AtA
+            % Decomposes AtA into an upper triangular matrix R such that AtA = R'R
+            tic; % Start timing
             n = size(obj.AtA, 1);
             obj.R = zeros(n);
             for i = 1:n
@@ -42,19 +50,23 @@ classdef CholeskyLeastSquares
                     end
                 end
             end
+            obj.ComputeCholeskyTime = toc; % End timing
         end
         
-        function x = solve(obj)
+        function [x, obj] = solve(obj)
             % Solve the system using the Cholesky factorization
             % R'R = AtA
             % Solve R'y = AtB using forward substitution
+            tic; % Start timing
             y = obj.forwardSubstitution(obj.R', obj.AtB);
             % Solve Rx = y using backward substitution
             x = obj.backwardSubstitution(obj.R, y);
+            obj.SolveTime = toc; % End timing
         end
         
         function y = forwardSubstitution(~, L, b)
             % Forward substitution to solve Ly = b
+            % L is a lower triangular matrix
             n = size(L, 1);
             y = zeros(n, size(b, 2));
             for i = 1:n
@@ -62,12 +74,13 @@ classdef CholeskyLeastSquares
             end
         end
         
-        function x = backwardSubstitution(~, U, y)
-            % Backward substitution to solve Ux = y
-            n = size(U, 1);
+        function x = backwardSubstitution(~, Q, y)
+            % Backward substitution to solve Qx = y
+            % Q is an upper triangular matrix
+            n = size(Q, 1);
             x = zeros(n, size(y, 2));
             for i = n:-1:1
-                x(i, :) = (y(i, :) - U(i, i+1:n) * x(i+1:n, :)) / U(i, i);
+                x(i, :) = (y(i, :) - Q(i, i+1:n) * x(i+1:n, :)) / Q(i, i);
             end
         end
 
@@ -77,6 +90,13 @@ classdef CholeskyLeastSquares
             frob_norm_squared = sum(sum(residual.^2));
             objective_value = (1 / (2 * obj.N)) * frob_norm_squared;
             fprintf('Objective function value: %f\n', objective_value);
+        end
+
+        function printTimes(obj)
+            % Print the times taken for Cholesky decomposition and solving
+            fprintf('Time taken for Cholesky decomposition: %f seconds\n', obj.ComputeCholeskyTime);
+            fprintf('Time taken for solving the system: %f seconds\n', obj.SolveTime);
+            fprintf('Total time: %f seconds\n', obj.ComputeCholeskyTime+obj.SolveTime);
         end
     end
 end
