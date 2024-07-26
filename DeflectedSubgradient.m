@@ -12,6 +12,7 @@ classdef DeflectedSubgradient
         U
         D
         lambda
+        N
     end
     
     methods
@@ -27,6 +28,7 @@ classdef DeflectedSubgradient
             obj.D = D;
             obj.lambda = lambda;
             obj.f_ref = obj.compute_f(obj.W2);
+            obj.N=size(U,1);
         end
 
         function [x_opt, status] = compute_deflected_subgradient(obj)
@@ -81,29 +83,28 @@ classdef DeflectedSubgradient
     methods (Access = private)
         % Metodi privati della classe
         function f_x = compute_f(obj, X)
-            N = size(obj.D,1);
             L_m = frobenius_norm_squared(obj.U * X - obj.D);
             L_r = norm1(X);
             % Calcola il fattore di normalizzazione
-            normalization_factor = 1 / (2 * N);
+            normalization_factor = 1 / (2 * obj.N);
             % Calcola il valore della funzione di riferimento
             f_x = normalization_factor * L_m + obj.lambda * L_r;
         end
 
         function g = compute_subgradient(obj)
             % Calcola il numero di campioni N e le dimensioni della matrice W2
-            [N, k] = size(obj.U);
-            [~, m] = size(obj.W2);
+            k = size(obj.U, 2);
+            m = size(obj.W2, 2);
         
             % Inizializza il gradiente L_m
             grad_Lm = zeros(k, m);
         
             % Calcola il gradiente di L_m
-            for t = 1:N
+            for t = 1:obj.N
                 ht = obj.U(t, :) * obj.W2 - obj.D(t, :); % Calcola ht
                 grad_Lm = grad_Lm + obj.U(t, :)' * ht; % Aggiorna il gradiente
             end
-            grad_Lm = grad_Lm / N;
+            grad_Lm = grad_Lm / obj.N;
         
             % Calcola il subgradiente di L1
             grad_L1 = zeros(k, m);

@@ -12,6 +12,7 @@ classdef DeflectedSubgradient2
         U
         D
         lambda
+        N
         Plotf
     end
     
@@ -27,7 +28,8 @@ classdef DeflectedSubgradient2
             obj.U = U;
             obj.D = D;
             obj.lambda = lambda;
-            obj.f_ref = obj.compute_f(obj.W2);
+            obj.N=size(obj.U, 1);
+            obj.f_ref = obj.compute_f(W2);
             obj.Plotf = Plotf; % Plot flag
         end
 
@@ -43,7 +45,9 @@ classdef DeflectedSubgradient2
             
             for i = 1:obj.max_iter
                 g_i = obj.compute_subgradient(x_i);
-                f_values = [f_values; f_x];
+                %f_values = [f_values; f_x];
+                h=norm(obj.U*x_i-obj.D, 2)/(2*obj.N)+obj.lambda*norm(x_i, 2);
+                f_values = [f_values, h];
                 norm_g_values = [norm_g_values; sqrt(frobenius_norm_squared(g_i))];
 
                 % -- stopping criteria --
@@ -99,29 +103,28 @@ classdef DeflectedSubgradient2
     methods (Access = private)
         % Metodi privati della classe
         function f_x = compute_f(obj, X)
-            N = size(obj.D,1);
             L_m = frobenius_norm_squared(obj.U * X - obj.D);
             L_r = norm1(X);
             % Calcola il fattore di normalizzazione
-            normalization_factor = 1 / (2 * N);
+            normalization_factor = 1 / (2 * obj.N);
             % Calcola il valore della funzione di riferimento
             f_x = normalization_factor * L_m + obj.lambda * L_r;
         end
 
         function g = compute_subgradient(obj, x_i)
             % Calcola il numero di campioni N e le dimensioni della matrice W2
-            [N, k] = size(obj.U);
-            [~, m] = size(obj.W2);
+            k = size(obj.U, 2);
+            m = size(obj.W2, 2);
         
             % Inizializza il gradiente L_m
             grad_Lm = zeros(k, m);
         
             % Calcola il gradiente di L_m
-            for t = 1:N
+            for t = 1:obj.N
                 ht = obj.U(t, :) * x_i - obj.D(t, :); % Calcola ht
                 grad_Lm = grad_Lm + obj.U(t, :)' * ht; % Aggiorna il gradiente
             end
-            grad_Lm = grad_Lm / N;
+            grad_Lm = grad_Lm / obj.N;
         
             % Calcola il subgradiente di L1
             grad_L1 = zeros(k, m);
