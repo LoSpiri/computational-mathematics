@@ -3,8 +3,7 @@ addpath("activation_functions")
 addpath("utils")
 addpath("const")
 
-config;
-rng(random_state);
+rng(17);
 
 % Define dataset paths
 datasets = struct(...

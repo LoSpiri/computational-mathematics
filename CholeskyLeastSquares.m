@@ -84,7 +84,7 @@ classdef CholeskyLeastSquares
             end
         end
 
-        function evaluateResult(obj, x_opt)
+        function objective_value = evaluateResult(obj, x_opt)
             % Evaluate the result and print the objective function value
             residual = obj.A * x_opt - obj.B;
             frob_norm_squared = sum(sum(residual.^2));
