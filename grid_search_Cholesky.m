@@ -13,7 +13,7 @@ function results = grid_search_Cholesky(X, Y, X_r, X_c, params)
                 activation_function_name = params.activation_functions_names{i};
 
                 nn = NeuralNetwork(X, k, X_r, X_c);
-                nn = nn.activate(activation_function);
+                nn = nn.firstLayer(activation_function);
                 nn = nn.secondLayer(size(Y,2));
 
                 chol = CholeskyLeastSquares(nn.U, Y, lambda);

@@ -26,7 +26,7 @@ classdef NeuralNetwork
             A = [A onesColumn];
         end
         
-        function obj = activate(obj, activation_function)
+        function obj = firstLayer(obj, activation_function)
             % Perform the forward pass and apply the activation function
             obj.X = obj.addBias(obj.X);
             Z = obj.X * obj.W1;
