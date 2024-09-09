@@ -18,12 +18,13 @@ datasets = struct(...
 [monks3_x_train, monks3_y_train, monks3_x_test, monks3_y_test] = load_dataset_monks(datasets.monks3_train, datasets.monks3_test);
 [cup_x_train, cup_y_train, cup_x_test, cup_y_test] = load_dataset_cup(datasets.cup);
 
-% Testing with monks1 dataset
+% Selecting monks1 dataset
 train_X = monks1_x_train;
 train_Y = monks1_y_train;
 test_X = monks1_x_test;
 test_Y = monks1_y_test;
 [train_X_r, train_X_c] = size(train_X);
+[test_X_r, test_X_c] = size(test_X);
 
 % Set the random number generator seed
 rng(17);
@@ -32,78 +33,18 @@ rng(17);
 params = struct();
 
 % Assign values to the fields of params
-params.activation_functions = {@relu, @tanh};
-params.activation_functions_names = {'relu', 'tanh'};
-params.k_values = [16];
+params.activation_functions = {@relu, @tanh, @sigmoid, @identity};
+params.activation_functions_names = {'relu', 'tanh', 'sigmoid', 'identity'};
+params.k_values = [26, 30, 40, 50];
 params.lambda_values = [1e-4];
 
 % Run grid search
 results = grid_search_Cholesky(train_X, train_Y, train_X_r, train_X_c, params);
 
-% Sort and display results
-sorted_results = sort_cell_matrix_by_column(results, 4, false);  % Sort by Evaluation
+% Sort results by Evaluation and display it
+sorted_results = sort_cell_matrix_by_column(results, 5, true);
+display_results_Cholesky(sorted_results);
 
 
-%{
-display_results(sorted_results);
 
-function display_results(results)
-    % Convert results cell array to table for better visualization
-    results_table = cell2table(results, 'VariableNames', {'ActivationFunction', 'KValue', 'Delta', 'Rho', 'R', 'Lambda', 'MaxIter', 'ElapsedTime', 'Evaluation'});
 
-    % Display the results table
-    disp('Results Summary:');
-    disp(results_table);
-
-    % Find the best result based on evaluation metric (lower is better)
-    [~, best_idx] = min(results_table.Evaluation);
-    best_result = results_table(best_idx, :);
-    fprintf('Best Configuration:\n');
-    disp(best_result);
-
-    % Get unique activation functions
-    unique_functions = unique(results_table.ActivationFunction);
-
-    % Plotting results
-    % Create a figure for plotting Elapsed Time
-    figure;
-    hold on;
-    colors = lines(numel(unique_functions)); % Distinct colors for each function
-
-    for i = 1:numel(unique_functions)
-        % Filter results for the current activation function
-        func_results = results_table(strcmp(results_table.ActivationFunction, unique_functions{i}), :);
-
-        % Plot Elapsed Time
-        plot(func_results.KValue, func_results.ElapsedTime, 'o-', 'DisplayName', unique_functions{i}, 'Color', colors(i, :));
-    end
-
-    % Add labels and legend
-    xlabel('K Value');
-    ylabel('Elapsed Time (seconds)');
-    title('Elapsed Time for Different Activation Functions');
-    legend('show');
-    grid on;
-    hold off;
-
-    % Create a figure for Evaluation
-    figure;
-    hold on;
-
-    for i = 1:numel(unique_functions)
-        % Filter results for the current activation function
-        func_results = results_table(strcmp(results_table.ActivationFunction, unique_functions{i}), :);
-
-        % Plot Evaluation
-        plot(func_results.KValue, func_results.Evaluation, 'o-', 'DisplayName', unique_functions{i}, 'Color', colors(i, :));
-    end
-
-    % Add labels and legend
-    xlabel('K Value');
-    ylabel('Evaluation');
-    title('Evaluation for Different Activation Functions');
-    legend('show');
-    grid on;
-    hold off;
-end
-%}

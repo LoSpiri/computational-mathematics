@@ -33,6 +33,4 @@ function results = grid_search_Cholesky(X, Y, X_r, X_c, params)
             end
         end
     end
-
-    disp(results);
 end
