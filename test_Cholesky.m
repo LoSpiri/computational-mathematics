@@ -12,7 +12,14 @@ function test_results=test_Cholesky(X, Y, X_r, X_c, W1, W2, activation_function_
     U = [U onesColum];
     D = U * W2;
 
-    test_results = Y-D;
+    residual = round(U * W2) - Y;
+    frob_norm_squared = sum(sum(residual.^2));
+    objective_value = (1 / (2 * X_r)) * frob_norm_squared;
+    %fprintf('Objective function value: %f\n', objective_value);
+
+    test_results = objective_value;
+
+    display(test_results);
     
 
 end
