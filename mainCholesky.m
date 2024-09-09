@@ -39,12 +39,15 @@ params.k_values = [26, 30, 40, 50];
 params.lambda_values = [1e-4];
 
 % Run grid search
-results = grid_search_Cholesky(train_X, train_Y, train_X_r, train_X_c, params);
+[results, W1, W2] = grid_search_Cholesky(train_X, train_Y, train_X_r, train_X_c, params);
 
 % Sort results by Evaluation and display it
 sorted_results = sort_cell_matrix_by_column(results, 5, true);
 display_results_Cholesky(sorted_results);
 
+% Save hyperparameters of the best configuration
+activation_func = sorted_results{1, 1};
+layer_dim = sorted_results{1, 2};
+lambda = sorted_results{1, 3};
 
-
-
+test_results = test_Cholesky(test_X, test_Y, test_X_r, test_X_c, W1, W2, activation_func, layer_dim, lambda);
