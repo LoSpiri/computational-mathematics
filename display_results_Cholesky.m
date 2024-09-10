@@ -11,14 +11,15 @@ function display_results_Cholesky(results)
 
 
     % Convert results cell array to table for better visualization
-    results_table = cell2table(results, 'VariableNames', {'ActivationFunction', 'KValue', 'Lambda', 'ElapsedTime', 'Evaluation'});
+    results_table = cell2table(results, 'VariableNames', {'ActivationFunction', 'KValue', ...
+        'Lambda', 'ElapsedTime', 'Evaluation', 'Validation_Evaluation' });
 
     % Display the results table
     disp('Results Summary:');
     disp(results_table);
 
     % Find the best result based on evaluation metric (lower is better)
-    [~, best_idx] = min(results_table.Evaluation);
+    [~, best_idx] = min(results_table.Validation_Evaluation);
     best_result = results_table(best_idx, :);
     fprintf('Best Configuration:\n');
     disp(best_result);

@@ -19,12 +19,23 @@ datasets = struct(...
 [cup_x_train, cup_y_train, cup_x_test, cup_y_test] = load_dataset_cup(datasets.cup);
 
 % Selecting monks1 dataset
-train_X = monks1_x_train;
-train_Y = monks1_y_train;
+X = monks1_x_train;
+Y = monks1_y_train;
+
+%Create training and validation set
+N = size(X, 1);
+train_size = floor(0.8 * N); 
+train_X = X(1:train_size, :);
+validation_X = X(train_size+1:end, :);
+train_Y = Y(1:train_size, :);
+validation_Y = Y(train_size+1:end, :);
+%Create test set
 test_X = monks1_x_test;
 test_Y = monks1_y_test;
+%Saving size of the sets
 [train_X_r, train_X_c] = size(train_X);
-[test_X_r, test_X_c] = size(test_X);
+[validation_X_r, ~] = size(validation_X);
+[test_X_r, ~] = size(test_X);
 
 % Set the random number generator seed
 rng(17);
@@ -35,14 +46,16 @@ params = struct();
 % Assign values to the fields of params
 params.activation_functions = {@relu, @tanh, @sigmoid, @identity};
 params.activation_functions_names = {'relu', 'tanh', 'sigmoid', 'identity'};
-params.k_values = [70, 100, 120];
-params.lambda_values = [1e-3, 1e-4, 3e-4];
+params.k_values = [6, 12, 50, 100, 125, 140];
+params.lambda_values = [1e-3, 5e-3, 1e-4, 3e-4];
 
 % Run grid search
-[results, W1, W2] = grid_search_Cholesky(train_X, train_Y, train_X_r, train_X_c, params);
+[results, W1, W2] = grid_search_Cholesky(train_X, train_Y, train_X_r, train_X_c, ...
+                                         validation_X, validation_Y, ...
+                                         validation_X_r, params);
 
 % Sort results by Evaluation and display it
-sorted_results = sort_cell_matrix_by_column(results, 5, true);
+sorted_results = sort_cell_matrix_by_column(results, 6, true);
 display_results_Cholesky(sorted_results);
 
 % Save hyperparameters of the best configuration
@@ -50,4 +63,4 @@ activation_func = sorted_results{1, 1};
 layer_dim = sorted_results{1, 2};
 lambda = sorted_results{1, 3};
 
-test_results = test_Cholesky(test_X, test_Y, test_X_r, test_X_c, W1, W2, activation_func, layer_dim, lambda);
+test_results = test_Cholesky(test_X, test_Y, test_X_r, W1, W2, activation_func, layer_dim, lambda);

@@ -1,4 +1,4 @@
-function [results, W1, W2] = grid_search_Cholesky(X, Y, X_r, X_c, params)
+function [results, W1, W2] = grid_search_Cholesky(X, Y, X_r, X_c, val_X, val_Y, val_X_r, params)
     % Performs grid search with Cholesky decomposition.
     %
     % INPUT:
@@ -16,7 +16,9 @@ function [results, W1, W2] = grid_search_Cholesky(X, Y, X_r, X_c, params)
 
     % Initialize cell array to store results
     num_combinations = numel(params.activation_functions) * numel(params.k_values) * numel(params.lambda_values);
-    results = cell(num_combinations, 5); % 5 columns: ActivationFunction, KValue, Lambda, ElapsedTime, Evaluation
+    % 6 columns: ActivationFunction, KValue, Lambda, ElapsedTime,
+    % Train_Evaluation, Validation_Evaluation
+    results = cell(num_combinations, 6); 
     index = 1;
 
     % Initialize a temporary variable to track the best evaluation score
@@ -45,16 +47,27 @@ function [results, W1, W2] = grid_search_Cholesky(X, Y, X_r, X_c, params)
                 elapsed_time = chol.ComputeCholeskyTime+chol.SolveTime;
                 eval = chol.evaluateResult(x_opt);
 
+                %Test on evaluation
+                onesColum=ones(val_X_r, 1);
+                Z = [val_X onesColum];
+                Z = Z * nn.W1;
+                U = activation_function(Z);
+                U = [U onesColum];
+                residual = round(U * x_opt) - val_Y;
+                frob_norm_squared = sum(sum(residual.^2));
+                validation_evaluation = (1 / (val_X_r)) * frob_norm_squared;
+
                 % Store results in cell array
                 results{index, 1} = activation_function_name;
                 results{index, 2} = k;
                 results{index, 3} = lambda;
                 results{index, 4} = elapsed_time;
                 results{index, 5} = eval;
+                results{index, 6} = validation_evaluation;
                 index = index + 1;
 
                 % Save layers' weights if this is the best result so far
-                if eval < temp
+                if validation_evaluation < temp
                     temp = eval;
                     W1 = nn.W1;
                     W2 = nn.W2;
