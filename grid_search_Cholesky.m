@@ -32,6 +32,8 @@ function [results, W1, W2] = grid_search_Cholesky(X, Y, X_r, X_c, val_X, val_Y, 
                 % Extract the current activation function and its name
                 activation_function = params.activation_functions{i};
                 activation_function_name = params.activation_functions_names{i};
+
+                %Training part
                 
                 % Initialize the neural network with the given parameters
                 nn = NeuralNetwork(X, k, X_r, X_c);
@@ -48,14 +50,14 @@ function [results, W1, W2] = grid_search_Cholesky(X, Y, X_r, X_c, val_X, val_Y, 
                 eval = chol.evaluateResult(x_opt);
 
                 %Test on evaluation
-                onesColum=ones(val_X_r, 1);
-                Z = [val_X onesColum];
-                Z = Z * nn.W1;
-                U = activation_function(Z);
-                U = [U onesColum];
-                residual = round(U * x_opt) - val_Y;
-                frob_norm_squared = sum(sum(residual.^2));
-                validation_evaluation = (1 / (val_X_r)) * frob_norm_squared;
+
+                %Pass valdidation set throug neural network
+                val_nn = NeuralNetwork(val_X, k, val_X_r, X_c, nn.W1, x_opt);
+                val_nn = val_nn.firstLayer(activation_function);
+                val_nn = val_nn.secondLayer(size(val_Y, 2));
+                %Evaluate validation set
+                validation_evaluation=val_nn.evaluateModel(val_Y);
+
 
                 % Store results in cell array
                 results{index, 1} = activation_function_name;
@@ -70,7 +72,7 @@ function [results, W1, W2] = grid_search_Cholesky(X, Y, X_r, X_c, val_X, val_Y, 
                 if validation_evaluation < temp
                     temp = eval;
                     W1 = nn.W1;
-                    W2 = nn.W2;
+                    W2 = x_opt;
                 end         
             end
         end
