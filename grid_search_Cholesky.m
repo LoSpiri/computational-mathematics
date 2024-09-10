@@ -1,16 +1,23 @@
 function [results, W1, W2] = grid_search_Cholesky(X, Y, X_r, X_c, val_X, val_Y, val_X_r, params)
-    % Performs grid search with Cholesky decomposition.
+    % Performs a grid search with Cholesky decomposition
+    % and evaluates on both training and validation sets.
     %
     % INPUT:
-    %   X      - Input data matrix.
-    %   Y      - Output data matrix.
-    %   X_r    - Number of rows in X.
-    %   X_c    - Number of columns in X.
-    %   params - Struct containing grid search parameters:
-    %            activation_functions, k_values, lambda_values.
+    %   X       - Input data matrix for training.
+    %   Y       - Output data matrix for training.
+    %   X_r     - Number of rows in X (training set).
+    %   X_c     - Number of columns in X (training set).
+    %   val_X   - Input data matrix for validation.
+    %   val_Y   - Output data matrix for validation.
+    %   val_X_r - Number of rows in val_X (validation set).
+    %   params  - Struct containing grid search parameters with fields:
+    %             activation_functions, activation_functions_names, k_values, lambda_values.
     %
     % OUTPUT:
-    %   results - Cell array with results of the grid search.
+    %   results - A cell array with the results of the grid search. Each row 
+    %             corresponds to a combination of parameters, containing:
+    %             ActivationFunction, KValue, Lambda, ElapsedTime, 
+    %             Train_Evaluation, Validation_Evaluation.
     %   W1      - Weights of the first layer for the best configuration.
     %   W2      - Weights of the second layer for the best configuration.
 
@@ -35,12 +42,12 @@ function [results, W1, W2] = grid_search_Cholesky(X, Y, X_r, X_c, val_X, val_Y, 
 
                 %Training part
                 
-                % Initialize the neural network with the given parameters
+                % Initialize the neural network for the training data
                 nn = NeuralNetwork(X, k, X_r, X_c);
                 nn = nn.firstLayer(activation_function);
                 nn = nn.secondLayer(size(Y,2));
                 
-                % Initialize Cholesky least squares solver
+                % Initialize and solve the Cholesky least squares problem
                 chol = CholeskyLeastSquares(nn.U, Y, lambda);
                 % Compute the Cholesky decomposition
                 chol = chol.computeCholesky();
@@ -49,9 +56,9 @@ function [results, W1, W2] = grid_search_Cholesky(X, Y, X_r, X_c, val_X, val_Y, 
                 elapsed_time = chol.ComputeCholeskyTime+chol.SolveTime;
                 eval = chol.evaluateResult(x_opt);
 
-                %Test on evaluation
+                %Validation step
 
-                %Pass valdidation set throug neural network
+                % Initialize the neural network with learned W1 and x_opt
                 val_nn = NeuralNetwork(val_X, k, val_X_r, X_c, nn.W1, x_opt);
                 val_nn = val_nn.firstLayer(activation_function);
                 val_nn = val_nn.secondLayer(size(val_Y, 2));
@@ -68,7 +75,7 @@ function [results, W1, W2] = grid_search_Cholesky(X, Y, X_r, X_c, val_X, val_Y, 
                 results{index, 6} = validation_evaluation;
                 index = index + 1;
 
-                % Save layers' weights if this is the best result so far
+                % Save the best configuration based on validation result
                 if validation_evaluation < temp
                     temp = eval;
                     W1 = nn.W1;
