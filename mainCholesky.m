@@ -18,21 +18,27 @@ datasets = struct(...
 [monks3_x_train, monks3_y_train, monks3_x_test, monks3_y_test] = load_dataset_monks(datasets.monks3_train, datasets.monks3_test);
 [cup_x_train, cup_y_train, cup_x_test, cup_y_test] = load_dataset_cup(datasets.cup);
 
-% Selecting monks1 dataset
+% Selecting monks1 training set
 X = monks1_x_train;
 Y = monks1_y_train;
+%X = cup_x_train;
+%Y = cup_y_train;
 
-%Create training and validation set
+% Divide training set in training and validation set
 N = size(X, 1);
 train_size = floor(0.8 * N); 
 train_X = X(1:train_size, :);
 validation_X = X(train_size+1:end, :);
 train_Y = Y(1:train_size, :);
 validation_Y = Y(train_size+1:end, :);
-%Create test set
+
+% Selecting monks1 test set
 test_X = monks1_x_test;
 test_Y = monks1_y_test;
-%Saving size of the sets
+%test_X = cup_x_test;
+%test_Y = cup_y_test;
+
+% Store size of the sets
 [train_X_r, train_X_c] = size(train_X);
 [validation_X_r, ~] = size(validation_X);
 [test_X_r, ~] = size(test_X);
@@ -63,4 +69,6 @@ activation_func = sorted_results{1, 1};
 layer_dim = sorted_results{1, 2};
 lambda = sorted_results{1, 3};
 
-test_results = test_Cholesky(test_X, test_Y, test_X_r, W1, W2, activation_func, layer_dim, lambda);
+% Show results on test set and 
+test_results = test_Cholesky(test_X, test_Y, test_X_r, train_X_c, ...
+                             W1, W2, activation_func, layer_dim, lambda);

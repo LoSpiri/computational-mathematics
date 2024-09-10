@@ -1,25 +1,29 @@
-function test_results=test_Cholesky(X, Y, X_r, W1, W2, activation_function_str, layer_dim, lambda)
-    
+function test_results=test_Cholesky(X, Y, X_r, X_c, W1, W2, ...
+                                    activation_function_str, k, lambda)
     
     % Convert the activation function string to a function handle
     activation_function = str2func(activation_function_str);
-    %test_results=cell(3, 4);
-
-    onesColum=ones(X_r, 1);
-    X = [X onesColum];
-    Z = X * W1;
-    U = activation_function(Z);
-    U = [U onesColum];
-    D = U * W2;
-
-    residual = round(U * W2) - Y;
-    frob_norm_squared = sum(sum(residual.^2));
-    objective_value = (1 / (X_r)) * frob_norm_squared;
-    %fprintf('Objective function value: %f\n', objective_value);
-
-    test_results = objective_value;
-
-    display(test_results);
+    test_results=cell(1, 5);
+                    
+    % Initialize the neural network with learned W1 and x_opt
+    test_nn = NeuralNetwork(X, k, X_r, X_c, W1, W2);
+    test_nn = test_nn.firstLayer(activation_function);
+    test_nn = test_nn.secondLayer(size(Y, 2));
+    %Evaluate validation set
+    result=test_nn.evaluateModel(Y);
     
+    test_results{1, 1} = 'Cholesky';
+    test_results{1, 2} = activation_function_str;
+    test_results{1, 3} = k;
+    test_results{1, 4} = lambda;
+    test_results{1, 5} = result;
+
+    % Convert cell array to table with column names
+    test_results_table = cell2table(test_results, ...
+        'VariableNames', {'Method', 'ActivationFunction', 'KValue', 'Lambda', ...
+        'TestResult'});
+
+    % Display the table
+    disp(test_results_table);
 
 end
