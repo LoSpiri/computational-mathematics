@@ -1,7 +1,11 @@
-classdef DeflectedSubgradient2
+classdef DeflectedSubgradient
     %DEFLECTEDSUBGRADIENT2 Class for performing Deflected Subgradient optimization.
     
     properties
+        A
+        b
+        interval_x1
+        interval_x2
         W2
         delta
         rho
@@ -13,10 +17,15 @@ classdef DeflectedSubgradient2
         lambda
         N
         Plotf
+        ElapsedTime
     end
     
     methods
-        function obj = DeflectedSubgradient2(W2, delta, rho, R, max_iter, U, D, lambda, Plotf)
+        function obj = DeflectedSubgradient(A, b, interval_x1, interval_x2, W2, delta, rho, R, max_iter, U, D, lambda, Plotf)
+            obj.A = A;
+            obj.b = b;
+            obj.interval_x1 = interval_x1;
+            obj.interval_x2 = interval_x2;
             obj.W2 = W2;
             obj.delta = delta;
             obj.rho = rho;
@@ -30,16 +39,24 @@ classdef DeflectedSubgradient2
             obj.Plotf = Plotf;
         end
 
-        function [x_opt, status, best_result] = compute_deflected_subgradient(obj)
+        function [x_opt, obj, best_result] = compute_deflected_subgradient(obj)
             f_bar = obj.f_ref;
             f_x = obj.f_ref;
             r = 0;
             x_i = obj.W2;
             f_values = [];
+            % alpha_i = 0.99;
+            gamma_i = 0.3;
             norm_g_values = [];
             alpha_values = [];
             gamma_values = [];
             best_result = struct('Iteration', 0, 'FunctionValue', f_x);
+
+            figure;
+            obj.plot_surface();
+            % disp(x_i);
+
+            tic;
         
             for i = 1:obj.max_iter
                 g_i = obj.compute_subgradient(x_i);
@@ -48,7 +65,6 @@ classdef DeflectedSubgradient2
                 norm_g_values = [norm_g_values; sqrt(frobenius_norm_squared(g_i))];
         
                 if sqrt(frobenius_norm_squared(g_i)) < 1e-12
-                    status = 'optimal';
                     break;
                 end
         
@@ -56,15 +72,27 @@ classdef DeflectedSubgradient2
                     beta_i = 1;
                     d_i = g_i;
                 else
-                    gamma_i = obj.update_gamma(g_i, d_i);
+                    % gamma_i = obj.update_gamma(g_i, d_i);
+                    % gamma_i = rand(1);
+                    % if gamma_i > 0.1
+                    %     gamma_i = gamma_i / 1.2;
+                    % end
                     gamma_values = [gamma_values; gamma_i];
-                    beta_i = gamma_i;
+                    beta_i = gamma_i-0.05;
                     d_i = gamma_i * g_i + (1 - gamma_i) * d_i;
                 end
                 alpha_i = obj.update_alpha(beta_i, f_x, d_i);
+                if alpha_i < 0.001
+                    alpha_i = 0.001;
+                end
+                % if alpha_i > 0.0001
+                %     alpha_i = alpha_i / 1.2;
+                % end
                 alpha_values = [alpha_values; alpha_i];
-        
+                
+                old_x_i = x_i;
                 x_i = x_i - alpha_i * d_i;
+                obj.plot_line(old_x_i, x_i);
                 f_x = obj.compute_f(x_i);
                 f_bar = min(f_bar, f_x);
         
@@ -81,13 +109,14 @@ classdef DeflectedSubgradient2
                 if f_x < best_result.FunctionValue
                     best_result.FunctionValue = f_x;
                     best_result.Iteration = i;
-                    best_result.X = x_i; % Store the best solution found
+                    best_result.X = x_i;
                 end
-                status = 'stopped';
             end
             x_opt = x_i;
-        
+            obj.ElapsedTime = toc;
+
             if obj.Plotf == 2
+                title('DeflectedSubgradient descent');
                 obj.plot_results(f_values, norm_g_values, alpha_values, gamma_values);
             end
         end
@@ -99,6 +128,7 @@ classdef DeflectedSubgradient2
             L_r = norm1(X);
             normalization_factor = 1 / (2 * obj.N);
             f_x = normalization_factor * L_m + obj.lambda * L_r;
+            disp(f_x)
         end
 
         function g = compute_subgradient(obj, x_i)
@@ -135,6 +165,10 @@ classdef DeflectedSubgradient2
             alpha_i = beta_i * (num / norm_d_i);
         end
 
+        function eval = evaluate_result(obj, x_opt)
+            eval = norm(obj.U * x_opt - Y, 'fro') / (2 * X_r) + obj.lambda * norm(x_opt, 1);
+        end
+
         function plot_results(obj, f_values, norm_g_values, alpha_values, gamma_values)
             figure;
             subplot(4,1,1);
@@ -162,19 +196,34 @@ classdef DeflectedSubgradient2
             ylabel('gamma');
         end
 
-        function plot_surface(obj, interval)
-            if size(obj.W2, 2) == 2
-                [XX, YY] = meshgrid(interval{1}, interval{2});
-                X = XX(:); 
-                Y = YY(:); 
-                Z = arrayfun(@(x, y) obj.compute_f([x; y]), X, Y);
-                ZZ = reshape(Z, size(XX));
-                contour(XX, YY, ZZ);
-                hold on;
-            else
-                error('Surface plotting is only supported for 2D problems.');
+        function plot_surface(obj)
+            % Define the reduced cost function for plotting
+            function f = cost(x)
+                A_proj = obj.A(:, 1:2); % Use only the first two columns for projection
+                f = 0.5 * x' * (A_proj' * A_proj) * x - obj.b(1:2)' * x; % Adjust to 2D projection
             end
+        
+            [XX, YY] = meshgrid(obj.interval_x1, obj.interval_x2);
+            X = XX(:); 
+            Y = YY(:); 
+            Z = zeros(size(X)); % Initialize Z for storing cost values
+        
+            % Calculate the cost for each (X, Y) pair
+            for i = 1:length(X)
+                Z(i) = cost([X(i); Y(i)]);
+            end
+        
+            % Reshape Z into the grid for contour plotting
+            ZZ = reshape(Z, size(XX));
+            contour(XX, YY, ZZ); % Plot the contour
+            hold on;
         end
+
+        function [] = plot_line(obj, x1, x2)
+            PXY = [x1, x2];
+            line('XData', PXY(1 , :), 'YData', PXY(2 , :), 'LineStyle', '-', 'LineWidth', 2, 'Marker', 'o', 'Color', 'black');
+        end
+
     end
 
     methods (Static, Access = private)

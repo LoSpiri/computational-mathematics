@@ -3,6 +3,7 @@ addpath("activation_functions")
 addpath("utils")
 addpath("datasets")
 
+%% Load Datasets
 % Define dataset paths
 datasets = struct(...
     'monks1_train', 'datasets/monks/monks-1.train', ...
@@ -13,7 +14,6 @@ datasets = struct(...
     'monks3_test', 'datasets/monks/monks-3.test', ...
     'cup', 'datasets/cup/ml-cup.csv');
 
-% Load datasets
 [monks1_x_train, monks1_y_train, monks1_x_test, monks1_y_test] = load_dataset_monks(datasets.monks1_train, datasets.monks1_test);
 [monks2_x_train, monks2_y_train, monks2_x_test, monks2_y_test] = load_dataset_monks(datasets.monks2_train, datasets.monks2_test);
 [monks3_x_train, monks3_y_train, monks3_x_test, monks3_y_test] = load_dataset_monks(datasets.monks3_train, datasets.monks3_test);
@@ -25,7 +25,7 @@ Y = monks2_y_train;
 %X = cup_x_train;
 %Y = cup_y_train;
 
-% Divide training set in training and validation set
+%% Training and validation sets
 N = size(X, 1);
 train_size = floor(0.8 * N); 
 train_X = X(1:train_size, :);
@@ -33,9 +33,8 @@ validation_X = X(train_size+1:end, :);
 train_Y = Y(1:train_size, :);
 validation_Y = Y(train_size+1:end, :);
 
-% Selecting monks1 test set
-test_X = monks2_x_test;
-test_Y = monks2_y_test;
+test_X = monks1_x_test;
+test_Y = monks1_y_test;
 %test_X = cup_x_test;
 %test_Y = cup_y_test;
 
@@ -44,9 +43,10 @@ test_Y = monks2_y_test;
 [validation_X_r, ~] = size(validation_X);
 [test_X_r, ~] = size(test_X);
 
-% Set the random number generator seed
-rng(17);
+%% Set the random number generator seed
+rng(16);
 
+%% Parameters Initialization
 % Initialize params as a struct
 params = struct();
 
@@ -56,7 +56,7 @@ params.activation_functions_names = {'relu', 'tanh', 'sigmoid', 'identity'};
 params.k_values = [6, 12, 50, 100, 125, 140];
 params.lambda_values = [1e-3, 5e-3, 1e-4, 3e-4];
 
-% Run grid search
+%% Grid search
 [results, W1, W2] = grid_search_Cholesky(train_X, train_Y, train_X_r, train_X_c, ...
                                          validation_X, validation_Y, ...
                                          validation_X_r, params);
@@ -65,6 +65,7 @@ params.lambda_values = [1e-3, 5e-3, 1e-4, 3e-4];
 sorted_results = sort_cell_matrix_by_column(results, 6, true);
 display_results_Cholesky(sorted_results);
 
+%% Testing
 % Save hyperparameters of the best configuration
 activation_func = sorted_results{1, 1};
 layer_dim = sorted_results{1, 2};
