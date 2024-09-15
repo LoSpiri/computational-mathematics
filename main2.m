@@ -2,6 +2,7 @@ clear variables;
 addpath("activation_functions")
 addpath("utils")
 addpath("const")
+addpath("Cholesky/")
 
 rng(17);
 

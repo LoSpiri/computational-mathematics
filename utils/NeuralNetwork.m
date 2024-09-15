@@ -54,10 +54,10 @@ classdef NeuralNetwork
              end
         end
 
-        function eval = evaluateModel(obj, Y)
+        function eval = evaluateModel(obj, Y, W2)
             % Computes the evaluation metric for the model
 
-            residual = obj.U * obj.W2 - Y;
+            residual = obj.U * W2 - Y;
             % Compute the Frobenius norm squared
             frob_norm_squared = sum(sum(residual.^2)); 
             eval= (1 / (obj.X_r)) * frob_norm_squared;

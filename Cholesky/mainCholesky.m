@@ -1,16 +1,17 @@
 clear variables;
-addpath("../activation_functions")
-addpath("../utils")
+addpath("activation_functions")
+addpath("utils")
+addpath("datasets")
 
 % Define dataset paths
 datasets = struct(...
-    'monks1_train', '../datasets/monks/monks-1.train', ...
-    'monks1_test', '../datasets/monks/monks-1.test', ...
-    'monks2_train', '../datasets/monks/monks-2.train', ...
-    'monks2_test', '../datasets/monks/monks-2.test', ...
-    'monks3_train', '../datasets/monks/monks-3.train', ...
-    'monks3_test', '../datasets/monks/monks-3.test', ...
-    'cup', '../datasets/cup/ml-cup.csv');
+    'monks1_train', 'datasets/monks/monks-1.train', ...
+    'monks1_test', 'datasets/monks/monks-1.test', ...
+    'monks2_train', 'datasets/monks/monks-2.train', ...
+    'monks2_test', 'datasets/monks/monks-2.test', ...
+    'monks3_train', 'datasets/monks/monks-3.train', ...
+    'monks3_test', 'datasets/monks/monks-3.test', ...
+    'cup', 'datasets/cup/ml-cup.csv');
 
 % Load datasets
 [monks1_x_train, monks1_y_train, monks1_x_test, monks1_y_test] = load_dataset_monks(datasets.monks1_train, datasets.monks1_test);
@@ -19,8 +20,8 @@ datasets = struct(...
 [cup_x_train, cup_y_train, cup_x_test, cup_y_test] = load_dataset_cup(datasets.cup);
 
 % Selecting monks1 training set
-X = monks1_x_train;
-Y = monks1_y_train;
+X = monks2_x_train;
+Y = monks2_y_train;
 %X = cup_x_train;
 %Y = cup_y_train;
 
@@ -33,8 +34,8 @@ train_Y = Y(1:train_size, :);
 validation_Y = Y(train_size+1:end, :);
 
 % Selecting monks1 test set
-test_X = monks1_x_test;
-test_Y = monks1_y_test;
+test_X = monks2_x_test;
+test_Y = monks2_y_test;
 %test_X = cup_x_test;
 %test_Y = cup_y_test;
 
@@ -68,6 +69,9 @@ display_results_Cholesky(sorted_results);
 activation_func = sorted_results{1, 1};
 layer_dim = sorted_results{1, 2};
 lambda = sorted_results{1, 3};
+
+comparation_table = methods_comparation(train_X, train_Y, train_X_r, train_X_c, ...
+                                W1, activation_func, layer_dim, lambda);
 
 % Show results on test set and 
 test_results = test_Cholesky(test_X, test_Y, test_X_r, train_X_c, ...

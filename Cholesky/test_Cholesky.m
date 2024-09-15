@@ -10,7 +10,7 @@ function test_results=test_Cholesky(X, Y, X_r, X_c, W1, W2, ...
     test_nn = test_nn.firstLayer(activation_function);
     test_nn = test_nn.secondLayer(size(Y, 2));
     %Evaluate validation set
-    result=test_nn.evaluateModel(Y);
+    result=test_nn.evaluateModel(Y, test_nn.W2);
     
     test_results{1, 1} = 'Cholesky';
     test_results{1, 2} = activation_function_str;
