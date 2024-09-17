@@ -37,6 +37,9 @@ function display_results_Cholesky(results)
         % Filter results for the current activation function
         func_results = results_table(strcmp(results_table.ActivationFunction, unique_functions{i}), :);
 
+        % Sort func_results by KValue to ensure correct order for plotting
+        func_results = sortrows(func_results, 'KValue');
+
         % Plot Elapsed Time
         plot(func_results.KValue, func_results.ElapsedTime, 'o-', 'DisplayName', unique_functions{i}, 'Color', colors(i, :));
     end
@@ -52,15 +55,16 @@ function display_results_Cholesky(results)
     % Create a figure for Evaluation
     figure;
     hold on;
-
     for i = 1:numel(unique_functions)
         % Filter results for the current activation function
         func_results = results_table(strcmp(results_table.ActivationFunction, unique_functions{i}), :);
 
+        % Sort func_results by KValue to ensure correct order for plotting
+        func_results = sortrows(func_results, 'KValue');
+
         % Plot Evaluation
         plot(func_results.KValue, func_results.Evaluation, 'o-', 'DisplayName', unique_functions{i}, 'Color', colors(i, :));
     end
-
     % Add labels and legend
     xlabel('K Value');
     ylabel('Evaluation');
@@ -68,4 +72,42 @@ function display_results_Cholesky(results)
     legend('show');
     grid on;
     hold off;
+
+    % Create a figure for Validation Evaluation
+    figure;
+    hold on;
+    for i = 1:numel(unique_functions)
+        % Filter results for the current activation function
+        func_results = results_table(strcmp(results_table.ActivationFunction, unique_functions{i}), :);
+
+        % Sort func_results by KValue to ensure correct order for plotting
+        func_results = sortrows(func_results, 'KValue');
+
+        % Plot Evaluation
+        plot(func_results.KValue, func_results.Validation_Evaluation, 'o-', 'DisplayName', unique_functions{i}, 'Color', colors(i, :));
+    end
+    % Add labels and legend
+    xlabel('K Value');
+    ylabel('Validation Evaluation');
+    title('Validation Evaluation for Different Activation Functions');
+    legend('show');
+    grid on;
+    hold off;
+
+    % Create a figure for comparing training and validation
+    figure;
+    hold on;
+    func_results = results_table(strcmp(results_table.ActivationFunction, best_result.ActivationFunction), :);
+    func_results = sortrows(func_results, 'KValue');
+    plot(func_results.KValue, func_results.Evaluation, 'o-', 'DisplayName', 'Evaluation', 'Color', 'b');
+    plot(func_results.KValue, func_results.Validation_Evaluation, 'o-', 'DisplayName', 'Validation', 'Color', 'r');
+    
+    % Add labels and legend
+    xlabel('K Value');
+    ylabel('Values');
+    title('Comparing training and validation evaluations');
+    legend('show');
+    grid on;
+    hold off;
+
 end

@@ -20,10 +20,10 @@ datasets = struct(...
 [cup_x_train, cup_y_train, cup_x_test, cup_y_test] = load_dataset_cup(datasets.cup);
 
 % Selecting monks1 training set
-X = monks2_x_train;
-Y = monks2_y_train;
-%X = cup_x_train;
-%Y = cup_y_train;
+X = monks1_x_train;
+Y = monks1_y_train;
+% X = cup_x_train;
+% Y = cup_y_train;
 
 %% Training and validation sets
 N = size(X, 1);
@@ -35,8 +35,8 @@ validation_Y = Y(train_size+1:end, :);
 
 test_X = monks1_x_test;
 test_Y = monks1_y_test;
-%test_X = cup_x_test;
-%test_Y = cup_y_test;
+% test_X = cup_x_test;
+% test_Y = cup_y_test;
 
 % Store size of the sets
 [train_X_r, train_X_c] = size(train_X);
@@ -44,7 +44,7 @@ test_Y = monks1_y_test;
 [test_X_r, ~] = size(test_X);
 
 %% Set the random number generator seed
-rng(16);
+rng(17);
 
 %% Parameters Initialization
 % Initialize params as a struct
@@ -53,8 +53,8 @@ params = struct();
 % Assign values to the fields of params
 params.activation_functions = {@relu, @tanh, @sigmoid, @identity};
 params.activation_functions_names = {'relu', 'tanh', 'sigmoid', 'identity'};
-params.k_values = [6, 12, 50, 100, 125, 140];
-params.lambda_values = [1e-3, 5e-3, 1e-4, 3e-4];
+params.k_values = [6, 8, 10, 12, 15, 17, 20, 30, 50, 100];
+params.lambda_values = [1e-4];
 
 %% Grid search
 [results, W1, W2] = grid_search_Cholesky(train_X, train_Y, train_X_r, train_X_c, ...
