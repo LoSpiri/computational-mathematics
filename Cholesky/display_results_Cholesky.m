@@ -35,7 +35,7 @@ function display_results_Cholesky(results)
 
     for i = 1:numel(unique_functions)
         % Filter results for the current activation function
-        func_results = results_table(strcmp(results_table.ActivationFunction, unique_functions{i}), :);
+        func_results = results_table(strcmp(results_table.ActivationFunction, unique_functions{i}) & results_table.Lambda == best_result.Lambda, :);
 
         % Sort func_results by KValue to ensure correct order for plotting
         func_results = sortrows(func_results, 'KValue');
@@ -57,7 +57,7 @@ function display_results_Cholesky(results)
     hold on;
     for i = 1:numel(unique_functions)
         % Filter results for the current activation function
-        func_results = results_table(strcmp(results_table.ActivationFunction, unique_functions{i}), :);
+        func_results = results_table(strcmp(results_table.ActivationFunction, unique_functions{i}) & results_table.Lambda == best_result.Lambda, :);
 
         % Sort func_results by KValue to ensure correct order for plotting
         func_results = sortrows(func_results, 'KValue');
@@ -78,7 +78,7 @@ function display_results_Cholesky(results)
     hold on;
     for i = 1:numel(unique_functions)
         % Filter results for the current activation function
-        func_results = results_table(strcmp(results_table.ActivationFunction, unique_functions{i}), :);
+        func_results = results_table(strcmp(results_table.ActivationFunction, unique_functions{i}) & results_table.Lambda == best_result.Lambda, :);
 
         % Sort func_results by KValue to ensure correct order for plotting
         func_results = sortrows(func_results, 'KValue');
@@ -97,7 +97,7 @@ function display_results_Cholesky(results)
     % Create a figure for comparing training and validation
     figure;
     hold on;
-    func_results = results_table(strcmp(results_table.ActivationFunction, best_result.ActivationFunction), :);
+    func_results = results_table(strcmp(results_table.ActivationFunction, best_result.ActivationFunction) & results_table.Lambda == best_result.Lambda, :);
     func_results = sortrows(func_results, 'KValue');
     plot(func_results.KValue, func_results.Evaluation, 'o-', 'DisplayName', 'Evaluation', 'Color', 'b');
     plot(func_results.KValue, func_results.Validation_Evaluation, 'o-', 'DisplayName', 'Validation', 'Color', 'r');

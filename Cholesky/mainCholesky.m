@@ -54,7 +54,7 @@ params = struct();
 params.activation_functions = {@relu, @tanh, @sigmoid, @identity};
 params.activation_functions_names = {'relu', 'tanh', 'sigmoid', 'identity'};
 params.k_values = [6, 8, 10, 12, 15, 17, 20, 30, 50, 100];
-params.lambda_values = [1e-4];
+params.lambda_values = [1e-4, 3e-4];
 
 %% Grid search
 [results, W1, W2] = grid_search_Cholesky(train_X, train_Y, train_X_r, train_X_c, ...
