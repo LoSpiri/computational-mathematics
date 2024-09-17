@@ -62,7 +62,7 @@ function [results, W1, W2] = grid_search_Cholesky(X, Y, X_r, X_c, val_X, val_Y, 
                 val_nn = val_nn.firstLayer(activation_function);
                 val_nn = val_nn.secondLayer(size(val_Y, 2));
                 % Evaluate validation set
-                validation_evaluation = val_nn.evaluateModel(val_Y);
+                validation_evaluation = val_nn.evaluateModel(val_Y, x_opt);
 
                 % Store results in cell array
                 results{index, 1} = activation_function_name;

@@ -26,8 +26,6 @@ function comparation_table=methods_comparation(X, Y, X_r, X_c, W1, activation_fu
     frob_norm_squared = sum(sum(residual.^2));
     result = (1 / (2 * X_r)) * frob_norm_squared;
 
-    %qr_result = comp_nn.evaluateModel(Y, W2_qr);
-
     comparation_table{1, 1} = 'QR (Matlab)';
     comparation_table{1, 2} = activation_func;
     comparation_table{1, 3} = k;
