@@ -1,4 +1,4 @@
-function [results, W1, W2] = grid_search_Cholesky(X, Y, X_r, X_c, val_X, val_Y, val_X_r, params)
+function [results, W1, W2, W1_train, W2_train] = grid_search_Cholesky(X, Y, X_r, X_c, val_X, val_Y, val_X_r, params)
     % Performs a grid search with Cholesky decomposition
     % and evaluates on both training and validation sets.
     %
@@ -30,6 +30,8 @@ function [results, W1, W2] = grid_search_Cholesky(X, Y, X_r, X_c, val_X, val_Y, 
 
     % Initialize a temporary variable to track the best evaluation score
     temp = 100;
+    % Initialize a temporary variable to track the best training score
+    temp_train=100;
 
     % Iterate over all parameter combinations
     for i = 1:numel(params.activation_functions)
@@ -53,7 +55,7 @@ function [results, W1, W2] = grid_search_Cholesky(X, Y, X_r, X_c, val_X, val_Y, 
                 chol = chol.computeCholesky();
                 % Solve the least squares problem
                 [x_opt, chol] = chol.solve();
-                elapsed_time = chol.ComputeCholeskyTime+chol.SolveTime;
+                elapsed_time = chol.ComputeCholeskyTime;
                 eval = chol.evaluateResult(x_opt);
 
                 %% Validation step
@@ -79,6 +81,14 @@ function [results, W1, W2] = grid_search_Cholesky(X, Y, X_r, X_c, val_X, val_Y, 
                     W1 = nn.W1;
                     W2 = x_opt;
                 end
+
+                % Save the best configuration based on train result
+                if eval < temp_train
+                    temp = eval;
+                    W1_train = nn.W1;
+                    W2_train = x_opt;
+                end
+
             end
         end
     end

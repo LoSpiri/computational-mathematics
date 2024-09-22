@@ -20,10 +20,10 @@ datasets = struct(...
 [cup_x_train, cup_y_train, cup_x_test, cup_y_test] = load_dataset_cup(datasets.cup);
 
 % Selecting monks1 training set
-X = monks1_x_train;
-Y = monks1_y_train;
-% X = cup_x_train;
-% Y = cup_y_train;
+% X = monks1_x_train;
+% Y = monks1_y_train;
+X = cup_x_train;
+Y = cup_y_train;
 
 %% Training and validation sets
 N = size(X, 1);
@@ -33,10 +33,10 @@ validation_X = X(train_size+1:end, :);
 train_Y = Y(1:train_size, :);
 validation_Y = Y(train_size+1:end, :);
 
-test_X = monks1_x_test;
-test_Y = monks1_y_test;
-% test_X = cup_x_test;
-% test_Y = cup_y_test;
+% test_X = monks1_x_test;
+% % test_Y = monks1_y_test;
+test_X = cup_x_test;
+test_Y = cup_y_test;
 
 % Store size of the sets
 [train_X_r, train_X_c] = size(train_X);
@@ -50,30 +50,42 @@ rng(17);
 % Initialize params as a struct
 params = struct();
 
-% Assign values to the fields of params
+% Assign values to the fields of params for neural network
 params.activation_functions = {@relu, @tanh, @sigmoid, @identity};
 params.activation_functions_names = {'relu', 'tanh', 'sigmoid', 'identity'};
-params.k_values = [6, 8, 10, 12, 15, 17, 20, 30, 50, 100];
-params.lambda_values = [1e-4, 3e-4];
+params.k_values = [500];
+params.lambda_values = [1e-4];
 
 %% Grid search
-[results, W1, W2] = grid_search_Cholesky(train_X, train_Y, train_X_r, train_X_c, ...
-                                         validation_X, validation_Y, ...
-                                         validation_X_r, params);
+
+% Find best configuration for NN and for Training Method
+[results, W1, W2, W1_train, W2_train] = grid_search_Cholesky(train_X, train_Y, ...
+                                                             train_X_r, train_X_c, ...
+                                                             validation_X, validation_Y, ...
+                                                             validation_X_r, params);
+
+%% Method analysis
+
+% Sort results by Training Evaluation to take the best configuration
+sorted_results_train = sort_cell_matrix_by_column(results, 5, true);
+
+
+Cholesky_Insights(sorted_results_train(1, 1:end-1), W1_train, W2_train, train_X, train_Y);
+
 
 % Sort results by Evaluation and display it
-sorted_results = sort_cell_matrix_by_column(results, 6, true);
-display_results_Cholesky(sorted_results);
+% sorted_results = sort_cell_matrix_by_column(results, 6, true);
+% display_results_Cholesky(sorted_results);
 
-%% Testing
-% Save hyperparameters of the best configuration
-activation_func = sorted_results{1, 1};
-layer_dim = sorted_results{1, 2};
-lambda = sorted_results{1, 3};
-
-comparation_table = methods_comparation(train_X, train_Y, train_X_r, train_X_c, ...
-                                W1, activation_func, layer_dim, lambda);
-
-% Show results on test set and 
-test_results = test_Cholesky(test_X, test_Y, test_X_r, train_X_c, ...
-                             W1, W2, activation_func, layer_dim, lambda);
+% %% Testing our NN
+% % Save hyperparameters of the best configuration
+% activation_func = sorted_results{1, 1};
+% layer_dim = sorted_results{1, 2};
+% lambda = sorted_results{1, 3};
+% 
+% comparation_table = methods_comparation(train_X, train_Y, train_X_r, train_X_c, ...
+%                                         W1, activation_func, layer_dim, lambda);
+% 
+% % Show results on test set and 
+% test_results = test_Cholesky(test_X, test_Y, test_X_r, train_X_c, ...
+%                              W1, W2, activation_func, layer_dim, lambda);

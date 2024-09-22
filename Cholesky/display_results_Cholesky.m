@@ -21,7 +21,7 @@ function display_results_Cholesky(results)
     % Find the best result based on evaluation metric (lower is better)
     [~, best_idx] = min(results_table.Validation_Evaluation);
     best_result = results_table(best_idx, :);
-    fprintf('Best Configuration:\n');
+    fprintf('Best Configuration for Neural Network:\n');
     disp(best_result);
 
     % Get unique activation functions

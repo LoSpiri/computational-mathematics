@@ -8,23 +8,22 @@ classdef CholeskyLeastSquares
         AtA % A transpose times A
         AtB % A transpose times B
         ComputeCholeskyTime % Time taken to compute Cholesky decomposition
-        SolveTime % Time taken to solve the system
     end
     
     methods
         function obj = CholeskyLeastSquares(U, D, lambda)
             % Constructor for CholeskyLeastSquares class
             % Initializes matrices A, B, AtA, and AtB with regularization term
-            
+            tic;
             obj.N = size(U, 1);
             obj.lambda=lambda;
-
             I=eye(size(U,2));
             I=2*obj.N*obj.lambda*I;
             obj.A = [U; I];
             obj.B = [D; zeros(size(U,2), size(D,2))];
             obj.AtA = (obj.A)' * obj.A;
             obj.AtB = (obj.A)' * obj.B;
+            obj.ComputeCholeskyTime = toc;
         end
         
         function obj = computeCholesky(obj)
@@ -50,7 +49,7 @@ classdef CholeskyLeastSquares
                     end
                 end
             end
-            obj.ComputeCholeskyTime = toc; % End timing
+            obj.ComputeCholeskyTime = obj.ComputeCholeskyTime+toc; % End timing
         end
         
         function [x, obj] = solve(obj)
@@ -61,7 +60,7 @@ classdef CholeskyLeastSquares
             y = obj.forwardSubstitution(obj.R', obj.AtB);
             % Solve Rx = y using backward substitution
             x = obj.backwardSubstitution(obj.R, y);
-            obj.SolveTime = toc; % End timing
+            obj.ComputeCholeskyTime =obj.ComputeCholeskyTime +toc; % End timing
         end
         
         function y = forwardSubstitution(~, L, b)
@@ -89,14 +88,8 @@ classdef CholeskyLeastSquares
             residual = obj.A * x_opt - obj.B;
             frob_norm_squared = sum(sum(residual.^2));
             objective_value = (1 / (2 * obj.N)) * frob_norm_squared;
-            fprintf('Objective function value: %f\n', objective_value);
+            % fprintf('Objective function value: %f\n', objective_value);
         end
 
-        function printTimes(obj)
-            % Print the times taken for Cholesky decomposition and solving
-            fprintf('Time taken for Cholesky decomposition: %f seconds\n', obj.ComputeCholeskyTime);
-            fprintf('Time taken for solving the system: %f seconds\n', obj.SolveTime);
-            fprintf('Total time: %f seconds\n', obj.ComputeCholeskyTime+obj.SolveTime);
-        end
     end
 end
