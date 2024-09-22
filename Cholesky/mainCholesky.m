@@ -53,7 +53,7 @@ params = struct();
 % Assign values to the fields of params for neural network
 params.activation_functions = {@relu, @tanh, @sigmoid, @identity};
 params.activation_functions_names = {'relu', 'tanh', 'sigmoid', 'identity'};
-params.k_values = [500];
+params.k_values = [10, 50, 100, 250, 500, 1000];
 params.lambda_values = [1e-4];
 
 %% Grid search
@@ -83,7 +83,7 @@ Cholesky_Insights(sorted_results_train(1, 1:end-1), W1_train, W2_train, train_X,
 % layer_dim = sorted_results{1, 2};
 % lambda = sorted_results{1, 3};
 % 
-% comparation_table = methods_comparation(train_X, train_Y, train_X_r, train_X_c, ...
+% comparation_table = methods_comparation(train_X, train_Y, train_X_r, train_X_c, ...%
 %                                         W1, activation_func, layer_dim, lambda);
 % 
 % % Show results on test set and 
