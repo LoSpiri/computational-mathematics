@@ -51,8 +51,8 @@ classdef DeflectedSubgradient
             gamma_values = zeros(1, obj.max_iter);
             best_result = struct('Iteration', 0, 'FunctionValue', f_x);
 
-            % figure;
-            % obj.plot_surface();
+            figure;
+            obj.plot_surface();
         
             for i = 1:obj.max_iter
                 g_i = obj.compute_subgradient(x_i);
@@ -78,7 +78,7 @@ classdef DeflectedSubgradient
                 
                 old_x_i = x_i;
                 x_i = x_i - alpha_i * d_i;
-                % obj.plot_line(old_x_i, x_i);
+                obj.plot_line(old_x_i, x_i);
                 f_x = obj.compute_f(x_i);
                 f_bar = min(f_bar, f_x);
         
@@ -155,7 +155,7 @@ classdef DeflectedSubgradient
             alpha_i = beta_i * (num / norm_d_i);
 
             % Introduce a lower bound for alpha_i
-            min_alpha = 1e-2;  % You can adjust this threshold based on the problem
+            min_alpha = 1e-2;
             if alpha_i < min_alpha
                 alpha_i = min_alpha;
             end

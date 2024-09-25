@@ -36,7 +36,7 @@ function [results, W1, W2] = grid_search(X, Y, X_r, X_c, val_X, val_Y, val_X_r, 
                                 interval_x1 = x1(1):0.1:x2(1); % For the first dimension
                                 interval_x2 = x1(2):0.1:x2(2); % For the second dimension
 
-                                ds = DeflectedSubgradient(X, Y, interval_x1, interval_x2, nn.W2, delta, rho, R, max_iter, nn.U, Y, lambda, 1);
+                                ds = DeflectedSubgradient(X, Y, interval_x1, interval_x2, nn.W2, delta, rho, R, max_iter, nn.U, Y, lambda, 2);
                                 [x_opt, ds] = ds.compute_deflected_subgradient();
                                 eval = ds.evaluate_result(x_opt);
 
