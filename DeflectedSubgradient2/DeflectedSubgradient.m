@@ -17,7 +17,7 @@ classdef DeflectedSubgradient
         lambda
         N
         Plotf
-        ElapsedTime
+        elapsed_time
     end
     
     methods
@@ -40,6 +40,7 @@ classdef DeflectedSubgradient
         end
 
         function [x_opt, obj, best_result] = compute_deflected_subgradient(obj)
+            tic;
             f_bar = obj.f_ref;
             f_x = obj.f_ref;
             r = 0;
@@ -50,11 +51,8 @@ classdef DeflectedSubgradient
             gamma_values = zeros(1, obj.max_iter);
             best_result = struct('Iteration', 0, 'FunctionValue', f_x);
 
-            figure;
-            obj.plot_surface();
-            % disp(x_i);
-
-            tic;
+            % figure;
+            % obj.plot_surface();
         
             for i = 1:obj.max_iter
                 g_i = obj.compute_subgradient(x_i);
@@ -80,7 +78,7 @@ classdef DeflectedSubgradient
                 
                 old_x_i = x_i;
                 x_i = x_i - alpha_i * d_i;
-                obj.plot_line(old_x_i, x_i);
+                % obj.plot_line(old_x_i, x_i);
                 f_x = obj.compute_f(x_i);
                 f_bar = min(f_bar, f_x);
         
@@ -101,13 +99,18 @@ classdef DeflectedSubgradient
                 end
             end
             x_opt = x_i;
-            obj.ElapsedTime = toc;
+            obj.elapsed_time = toc;
 
             if obj.Plotf == 2
                 title('DeflectedSubgradient descent');
                 obj.plot_results(f_values, norm_g_values, alpha_values, gamma_values);
             end
         end
+
+        function eval = evaluate_result(obj, x_opt)
+            eval = norm(obj.U * x_opt - obj.b, 'fro') / (2 * size(obj.A, 1)) + obj.lambda * norm(x_opt, 1);
+        end
+
     end
 
     methods (Access = private)
@@ -116,7 +119,6 @@ classdef DeflectedSubgradient
             L_r = norm1(X);
             normalization_factor = 1 / (2 * obj.N);
             f_x = normalization_factor * L_m + obj.lambda * L_r;
-            disp(f_x)
         end
 
         function g = compute_subgradient(obj, x_i)
@@ -157,10 +159,6 @@ classdef DeflectedSubgradient
             if alpha_i < min_alpha
                 alpha_i = min_alpha;
             end
-        end
-
-        function eval = evaluate_result(obj, x_opt)
-            eval = norm(obj.U * x_opt - Y, 'fro') / (2 * X_r) + obj.lambda * norm(x_opt, 1);
         end
 
         function plot_results(obj, f_values, norm_g_values, alpha_values, gamma_values)
@@ -221,30 +219,51 @@ classdef DeflectedSubgradient
     end
 
     methods (Static, Access = private)
-        function gamma_i = update_gamma(g_i, d_i)
-            norm_g_i = frobenius_norm_squared(g_i);
-            norm_d_i = frobenius_norm_squared(d_i);
-            dot_product = sum(sum(g_i .* d_i));
+        % function gamma_i = update_gamma(g_i, d_i)
+        %     norm_g_i = frobenius_norm_squared(g_i);
+        %     norm_d_i = frobenius_norm_squared(d_i);
+        %     dot_product = sum(sum(g_i .* d_i));
+        % 
+        %     % gamma_i = (norm_d_i - dot_product) / (norm_g_i + norm_d_i - 2 * dot_product);
+        % 
+        %     % Calculate the denominator
+        %     denominator = norm_g_i + norm_d_i - 2 * dot_product;
+        % 
+        %     eps = 0.00000001;
+        %     % Check if the denominator is too close to zero
+        %     if abs(denominator) < eps
+        %         % Handle near-zero denominator by setting gamma_i to a default value
+        %         gamma_i = 0.5;  % You can set a reasonable default value
+        %     else
+        %         % Compute gamma_i
+        %         gamma_i = (norm_d_i - dot_product) / denominator;
+        % 
+        %         % Ensure gamma_i is within the range [0, 1]
+        %         if gamma_i < 0
+        %             gamma_i = 0.1;  % Set to 0.1 if it's less than 0
+        %         elseif gamma_i > 1
+        %             gamma_i = 0.9;  % Set to 0.9 if it's greater than 1
+        %         end
+        %     end
+        % end
 
-            % gamma_i = (norm_d_i - dot_product) / (norm_g_i + norm_d_i - 2 * dot_product);
-            
-            % Calculate the denominator
-            denominator = norm_g_i + norm_d_i - 2 * dot_product;
-            
-            eps = 0.00000001;
-            % Check if the denominator is too close to zero
-            if abs(denominator) < eps
-                % Handle near-zero denominator by setting gamma_i to a default value
-                gamma_i = 0.5;  % You can set a reasonable default value
+        function gamma_i = update_gamma(g_i, d_i)
+            v = g_i - d_i;
+        
+            if all(v == 0)
+                gamma_i = 0.5;
             else
-                % Compute gamma_i
-                gamma_i = (norm_d_i - dot_product) / denominator;
-                
-                % Ensure gamma_i is within the range [0, 1]
-                if gamma_i < 0
-                    gamma_i = 0.1;  % Set to 0.1 if it's less than 0
-                elseif gamma_i > 1
-                    gamma_i = 0.9;  % Set to 0.9 if it's greater than 1
+                dot_product_v_d = sum(sum(v .* d_i));
+                norm_v_squared = frobenius_norm_squared(v);
+        
+                gamma_i = -dot_product_v_d / norm_v_squared;
+        
+                if gamma_i < 0 || gamma_i > 1
+                    if frobenius_norm_squared(d_i) <= norm_v_squared + 2 * dot_product_v_d + frobenius_norm_squared(d_i)
+                        gamma_i = 0.0001;
+                    else
+                        gamma_i = 0.9999;
+                    end
                 end
             end
         end
