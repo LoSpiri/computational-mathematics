@@ -104,8 +104,8 @@ function display_results_Cholesky(results)
     
     % Add labels and legend
     xlabel('K Value');
-    ylabel('Values');
-    title('Comparing training and validation evaluations');
+    ylabel('Loss');
+    title('Comparing Training Loss and Validation Loss');
     legend('show');
     grid on;
     hold off;

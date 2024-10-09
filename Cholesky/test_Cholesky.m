@@ -1,19 +1,26 @@
-function test_results=test_Cholesky(X, Y, X_r, X_c, W1, W2, ...
-                                    activation_function_str, k, lambda)
+function test_results=test_Cholesky(results, X, Y, W1, W2)
+
+    % Save hyperparameters of the best configuration
+    activation_func = results{1, 1};
+    k = results{1, 2};
+    lambda = results{1, 3};
     
     % Convert the activation function string to a function handle
-    activation_function = str2func(activation_function_str);
+    activation_function = str2func(activation_func);
+
+    %Create cell
     test_results=cell(1, 5);
                     
     % Initialize the neural network with learned W1 and x_opt
-    test_nn = NeuralNetwork(X, k, X_r, X_c, W1, W2);
+    test_nn = NeuralNetwork(X, k, size(X, 1), size(X,2), W1, W2);
     test_nn = test_nn.firstLayer(activation_function);
     test_nn = test_nn.secondLayer(size(Y, 2));
-    %Evaluate validation set
+
+    %Evaluate test set
     result=test_nn.evaluateModel(Y, test_nn.W2);
     
     test_results{1, 1} = 'Cholesky';
-    test_results{1, 2} = activation_function_str;
+    test_results{1, 2} = activation_func;
     test_results{1, 3} = k;
     test_results{1, 4} = lambda;
     test_results{1, 5} = result;

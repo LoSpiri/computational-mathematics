@@ -60,7 +60,8 @@ classdef NeuralNetwork
             residual = obj.U * W2 - Y;
             % Compute the Frobenius norm squared
             frob_norm_squared = sum(sum(residual.^2)); 
-            eval= (1 / (obj.X_r)) * frob_norm_squared;
+            eval= (1 / (2*obj.X_r)) * frob_norm_squared;
+
         end
     end
     
