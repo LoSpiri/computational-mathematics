@@ -27,15 +27,8 @@ function [results, W1, W2] = grid_search(X, Y, X_r, X_c, val_X, val_Y, val_X_r, 
                                 nn = nn.firstLayer(activation_function);
                                 nn = nn.secondLayer(size(Y,2));
 
-                                % Set optimization options
-                                options = optimoptions('fminunc', 'Display', 'iter', 'TolFun', 1e-12, 'TolX', 1e-12, 'MaxIter', 1000);
-                                % Define the objective function as a function handle
-                                objective_function = norm(obj.U * W2 - Y, 'fro') / (2 * size(X, 1)) + obj.lambda * norm(W2, 1);
-                                % Replace the two lines of deflected subgradient code with fminunc
-                                [x_opt, f_opt] = fminunc(objective_function, initial_guess, options);
-
                                 ds = DeflectedSubgradient(X, Y, nn.W2, delta, rho, R, max_iter, nn.U, Y, lambda, plot_results);
-                                [x_opt, ds] = ds.compute_deflected_subgradient();
+                                [x_opt, ds, status] = ds.compute_deflected_subgradient();
                                 eval = ds.evaluate_result(x_opt);
 
                                 %% Validation step
@@ -57,6 +50,7 @@ function [results, W1, W2] = grid_search(X, Y, X_r, X_c, val_X, val_Y, val_X_r, 
                                 results{index, 8}  = ds.elapsed_time;
                                 results{index, 9}  = eval;
                                 results{index, 10} = validation_evaluation;
+                                results{index, 11} = status;
                                 index = index + 1;
 
                                 % Save the best configuration based on validation result

@@ -66,7 +66,7 @@ params = struct();
 % params.rho_values = [0.1, 0.25, 0.5];
 % params.R_values = [2, 8, 32];
 % params.lambda_values = [1e-4, 3e-3];
-% params.max_iter = [100, 200];
+% params.max_iter = [100, 200, 1000];
 
 params.activation_functions = {@relu};
 params.activation_functions_names = {'relu'};
@@ -79,7 +79,7 @@ params.max_iter = [250];
 
 %% Grid search
 plot_results = true;
-[results, W1, W2] = grid_search_opt(train_X, train_Y, train_X_r, train_X_c, ...
+[results, W1, W2] = grid_search(train_X, train_Y, train_X_r, train_X_c, ...
                       validation_X, validation_Y, ...
                       validation_X_r, params, plot_results);
 

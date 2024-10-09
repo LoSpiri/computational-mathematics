@@ -34,7 +34,7 @@ classdef DeflectedSubgradient
             obj.plot_results = plot_results;
         end
 
-        function [x_opt, obj, best_result] = compute_deflected_subgradient(obj)
+        function [x_opt, obj, exit_status] = compute_deflected_subgradient(obj)
             tic;
             f_bar = obj.f_ref;
             f_x = obj.f_ref;
@@ -46,6 +46,7 @@ classdef DeflectedSubgradient
             gamma_values = zeros(1, obj.max_iter);
             d_values = zeros(1, obj.max_iter);
             best_result = struct('Iteration', 0, 'FunctionValue', f_x);
+            exit_status = "";
 
             if obj.plot_results
                 figure;
@@ -59,6 +60,7 @@ classdef DeflectedSubgradient
                 norm_g_values(i) = sqrt(frobenius_norm_squared(g_i));
         
                 if sqrt(frobenius_norm_squared(g_i)) < 1e-12
+                    exit_status = "STOP CONDITION g_i";
                     break;
                 end
         
@@ -71,6 +73,10 @@ classdef DeflectedSubgradient
                     beta_i = gamma_i;
                     d_i = gamma_i * g_i + (1 - gamma_i) * d_i;
                     d_values(i) = frobenius_norm_squared(d_i);
+                end
+                if d_i < 1e-6
+                    exit_status = "STOP CONDITION d_i";
+                    break;
                 end
                 alpha_i = obj.update_alpha(beta_i, f_x, d_i);
                 alpha_values(i) = alpha_i;
@@ -101,6 +107,7 @@ classdef DeflectedSubgradient
                     best_result.X = x_i;
                 end
             end
+            exit_status = "MAX ITER";
             x_opt = x_i;
             obj.elapsed_time = toc;
 
