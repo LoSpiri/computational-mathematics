@@ -1,6 +1,6 @@
 clear variables;
-addpath("../activation_functions")
-addpath("../utils")
+addpath("activation_functions\")
+addpath("utils\")
 
 %% Load Datasets
 % Define dataset paths
@@ -78,12 +78,13 @@ params.lambda_values = [4e-5];
 params.max_iter = [250];
 
 %% Grid search
-[results, W1, W2] = grid_search(train_X, train_Y, train_X_r, train_X_c, ...
+plot_results = true;
+[results, W1, W2] = grid_search_opt(train_X, train_Y, train_X_r, train_X_c, ...
                       validation_X, validation_Y, ...
-                      validation_X_r, params);
+                      validation_X_r, params, plot_results);
 
 % Sort by evaluation and display results
 sorted_results = sort_cell_matrix_by_column(results, 10, false);
-display_results(sorted_results);
+display_results(sorted_results, plot_results);
 
 %% Testing

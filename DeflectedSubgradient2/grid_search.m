@@ -1,14 +1,14 @@
-function [results, W1, W2] = grid_search(X, Y, X_r, X_c, val_X, val_Y, val_X_r, params)
+function [results, W1, W2] = grid_search(X, Y, X_r, X_c, val_X, val_Y, val_X_r, params, plot_results)
     % Initialize cell array to store results
     num_combinations = numel(params.activation_functions) * numel(params.k_values) * ...
                         numel(params.delta_values) * numel(params.rho_values) * ...
                         numel(params.R_values) * numel(params.lambda_values) * ...
                         numel(params.max_iter);
-    results = cell(num_combinations, 10); % 10 columns: ActivationFunction, KValue, Delta, Rho, R, Lambda, MaxIter, ElapsedTime, Evaluation, Validation evaluation
+    results = cell(num_combinations, 10);
     index = 1;
 
     % Initialize a temporary variable to track the best evaluation score
-    temp = 100;
+    temp = inf;
 
     % Iterate over all parameter combinations
     for i = 1:numel(params.activation_functions)
@@ -27,16 +27,14 @@ function [results, W1, W2] = grid_search(X, Y, X_r, X_c, val_X, val_Y, val_X_r, 
                                 nn = nn.firstLayer(activation_function);
                                 nn = nn.secondLayer(size(Y,2));
 
-                                % Define the offset around W2 for plotting
-                                offset = 1; % Range around W2
-                                x1 = Y - offset; % Lower bound
-                                x2 = Y + offset; % Upper bound
-                                
-                                % Create interval centered around W2, with a step size of 0.01
-                                interval_x1 = x1(1):0.1:x2(1); % For the first dimension
-                                interval_x2 = x1(2):0.1:x2(2); % For the second dimension
+                                % Set optimization options
+                                options = optimoptions('fminunc', 'Display', 'iter', 'TolFun', 1e-12, 'TolX', 1e-12, 'MaxIter', 1000);
+                                % Define the objective function as a function handle
+                                objective_function = norm(obj.U * W2 - Y, 'fro') / (2 * size(X, 1)) + obj.lambda * norm(W2, 1);
+                                % Replace the two lines of deflected subgradient code with fminunc
+                                [x_opt, f_opt] = fminunc(objective_function, initial_guess, options);
 
-                                ds = DeflectedSubgradient(X, Y, interval_x1, interval_x2, nn.W2, delta, rho, R, max_iter, nn.U, Y, lambda, 2);
+                                ds = DeflectedSubgradient(X, Y, nn.W2, delta, rho, R, max_iter, nn.U, Y, lambda, plot_results);
                                 [x_opt, ds] = ds.compute_deflected_subgradient();
                                 eval = ds.evaluate_result(x_opt);
 
