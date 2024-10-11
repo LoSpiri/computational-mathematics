@@ -6,6 +6,9 @@ function display_results(results, plot_results)
                                     'Lambda', 'Rho', 'R', 'Delta', 'MaxIter', 'Status', ...
                                     'ElapsedTime', 'Evaluation', 'ValidationEvaluation'});
 
+    % Remove duplicate rows
+    results_table = unique(results_table, 'rows', 'stable');
+
     % Display the results table
     disp('Results Summary:');
     disp(results_table);
