@@ -1,4 +1,5 @@
-function [results, W1, W2, W1_train, W2_train] = grid_search(X, Y, val_X, val_Y, params, plot_results)
+function [results, W1, W2, W1_train, W2_train] = grid_search(X, Y, val_X, val_Y, ...
+                                    modelParams, deflectedParams, plot_results)
     % Performs grid search for the Deflected Subgradient method in a neural network.
     % Explores multiple combinations of hyperparameters: activation function, k, delta, rho, R, lambda, and max iterations.
     % 
@@ -19,10 +20,10 @@ function [results, W1, W2, W1_train, W2_train] = grid_search(X, Y, val_X, val_Y,
 
 
     % Initialize cell array to store results
-    num_combinations = numel(params.activation_functions) * numel(params.k_values) * ...
-                        numel(params.lambda_values) * numel(params.rho_values) * ...
-                        numel(params.R_values) * numel(params.delta_values) * ...
-                        numel(params.max_iter);
+    num_combinations = numel(modelParams.activation_functions) * numel(modelParams.k_values) * ...
+                        numel(modelParams.lambda_values) * numel(deflectedParams.rho_values) * ...
+                        numel(deflectedParams.R_values) * numel(deflectedParams.delta_values) * ...
+                        numel(deflectedParams.max_iter);
     results = cell(num_combinations, 10);
     index = 1;
 
@@ -32,17 +33,17 @@ function [results, W1, W2, W1_train, W2_train] = grid_search(X, Y, val_X, val_Y,
     temp_train=inf;
 
     % Iterate over all parameter combinations
-    for i = 1:numel(params.activation_functions)
-        for k = params.k_values
-            for delta = params.delta_values
-                for rho = params.rho_values
-                    for R = params.R_values
-                        for lambda = params.lambda_values
-                            for max_iter = params.max_iter
+    for i = 1:numel(modelParams.activation_functions)
+        for k = modelParams.k_values
+            for lambda = modelParams.lambda_values
+                for rho = deflectedParams.rho_values
+                    for R = deflectedParams.R_values
+                        for delta = deflectedParams.delta_values
+                            for max_iter = deflectedParams.max_iter
 
                                 % Extract the current activation function and its name
-                                activation_function = params.activation_functions{i};
-                                activation_function_name = params.activation_functions_names{i};
+                                activation_function = modelParams.activation_functions{i};
+                                activation_function_name = modelParams.activation_functions_names{i};
                                 
                                 %% Training step
                                 

@@ -1,6 +1,7 @@
 clear variables;
-addpath("activation_functions\")
-addpath("utils\")
+addpath("ModelParameters/")
+addpath("utils/")
+addpath("datasets/")
 
 %% Load Datasets
 
@@ -52,48 +53,21 @@ rng(17);
 
 %% Parameters Initialization
 
-% Initialize params as a struct
-params = struct();
-
-% Assign values to the fields of params
-% params.activation_functions = {@relu};
-% params.activation_functions_names = {'relu'};
-% params.k_values = [2, 4, 8, 16, 32, 64, 128, 256];
-% params.delta_values = [0.001, 0.01, 0.25, 0.5];
-% params.rho_values = [0.1, 0.25, 0.5, 0.75, 0.95];
-% params.R_values = [2, 4, 8, 16, 32, 64, 128, 256];
-% params.lambda_values = [1e-4, 3e-3, 4e-5];
-% params.max_iter = [100, 250];
-
-% params.activation_functions = {@relu};
-% params.activation_functions_names = {'relu'};
-% params.k_values = [2, 4, 8, 16, 32];
-% params.delta_values = [0.001, 0.01];
-% params.rho_values = [0.1, 0.25, 0.5];
-% params.R_values = [2, 8, 32];
-% params.lambda_values = [1e-4, 3e-3];
-% params.max_iter = [100, 200, 1000];
-
-params.activation_functions = {@relu};
-params.activation_functions_names = {'relu'};
-params.k_values = [8, 20];
-params.delta_values = [0.001, 0.0001];
-params.rho_values = [0.25];
-params.R_values = [256];
-params.lambda_values = [4e-5];
-params.max_iter = [250];
+modelParams=modelParameters();
+deflectedParams=deflectedParameters();
 
 %% Grid search
 
 plot_results = false;
 [results, W1, W2, W1_train, W2_train] = grid_search(train_X, train_Y, validation_X, ...
-                                 validation_Y, params, plot_results);
+                                 validation_Y, modelParams, deflectedParams, plot_results);
 
 %% NN Analysis
 
 % Sort results by Evaluation and display it
 sorted_results = sort_cell_matrix_by_column(results, 11, true);
 display_results(sorted_results, plot_results);
+%display(sorted_results(1, 1:end))
 
 % Show results on test set and 
-test_results = testDeflected(sorted_results(1, 1:end-1), test_X, test_Y, W1, W2);
+test_results = testDeflected(sorted_results(1, 1:end), test_X, test_Y, W1, W2);

@@ -31,6 +31,7 @@ function test_results=test_Cholesky(results, X, Y, W1, W2)
         'TestResult'});
 
     % Display the table
+    fprintf('Test result for Neural Network:\n');
     disp(test_results_table);
 
 end

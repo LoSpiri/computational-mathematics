@@ -29,8 +29,9 @@ function test_results=testDeflected(results, X, Y, W1, W2)
     test_results_table = cell2table(test_results, ...
         'VariableNames', {'Method', 'ActivationFunction', 'KValue', 'Lambda', ...
         'TestResult'});
-
+    
     % Display the table
+    fprintf('Test result for Neural Network:\n');
     disp(test_results_table);
 
 end

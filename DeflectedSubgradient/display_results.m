@@ -1,4 +1,6 @@
 function display_results(results, plot_results)
+
+
     % Convert results cell array to table for better visualization
     results_table = cell2table(results, 'VariableNames', {'ActivationFunction', 'KValue', ...
                                     'Lambda', 'Rho', 'R', 'Delta', 'MaxIter', 'Status', ...
@@ -9,9 +11,9 @@ function display_results(results, plot_results)
     disp(results_table);
 
     % Find the best result based on evaluation metric (lower is better)
-    [~, best_idx] = min(results_table.Evaluation);
+    [~, best_idx] = min(results_table.ValidationEvaluation);
     best_result = results_table(best_idx, :);
-    fprintf('Best Configuration:\n');
+    fprintf('Best Configuration for Neural Network:\n');
     disp(best_result);
 
     if plot_results == true
