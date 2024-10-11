@@ -45,11 +45,6 @@ test_Y = monks1_y_test;
 %test_X = cup_x_test;
 %test_Y = cup_y_test;
 
-% Store size of the sets
-[train_X_r, train_X_c] = size(train_X);
-[validation_X_r, ~] = size(validation_X);
-[test_X_r, ~] = size(test_X);
-
 %% Set the random number generator seed
 rng(17);
 
@@ -86,10 +81,9 @@ params.lambda_values = [4e-5];
 params.max_iter = [250];
 
 %% Grid search
-plot_results = true;
-[results, W1, W2] = grid_search(train_X, train_Y, train_X_r, train_X_c, ...
-                      validation_X, validation_Y, ...
-                      validation_X_r, params, plot_results);
+plot_results = false;
+[results, W1, W2] = grid_search(train_X, train_Y, validation_X, validation_Y, ...
+                                 params, plot_results);
 
 % Sort by evaluation and display results
 sorted_results = sort_cell_matrix_by_column(results, 10, false);

@@ -1,4 +1,4 @@
-function [results, W1, W2] = grid_search(X, Y, X_r, X_c, val_X, val_Y, val_X_r, params, plot_results)
+function [results, W1, W2] = grid_search_opt(X, Y, val_X, val_Y, params, plot_results)
     % Initialize cell array to store results
     num_combinations = numel(params.activation_functions) * numel(params.k_values) * ...
                         numel(params.delta_values) * numel(params.rho_values) * ...
@@ -23,7 +23,7 @@ function [results, W1, W2] = grid_search(X, Y, X_r, X_c, val_X, val_Y, val_X_r, 
                                 activation_function = params.activation_functions{i};
                                 activation_function_name = params.activation_functions_names{i};
 
-                                nn = NeuralNetwork(X, k, X_r, X_c);
+                                nn = NeuralNetwork(X, k, size(X, 1), size(X,2));
                                 nn = nn.firstLayer(activation_function);
                                 nn = nn.secondLayer(size(Y,2));
 
@@ -43,7 +43,7 @@ function [results, W1, W2] = grid_search(X, Y, X_r, X_c, val_X, val_Y, val_X_r, 
 
                                 %% Validation step
                                 % Initialize the neural network with learned W1 and x_opt
-                                val_nn = NeuralNetwork(val_X, k, val_X_r, X_c, nn.W1, x_opt);
+                                val_nn = NeuralNetwork(val_X, k, size(val_X, 1), size(X,2), nn.W1, x_opt);
                                 val_nn = val_nn.firstLayer(activation_function);
                                 val_nn = val_nn.secondLayer(size(val_Y, 2));
                                 % Evaluate validation set
