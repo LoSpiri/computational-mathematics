@@ -18,13 +18,21 @@ datasets = struct(...
 [monks3_x_train, monks3_y_train, monks3_x_test, monks3_y_test] = load_dataset_monks(datasets.monks3_train, datasets.monks3_test);
 [cup_x_train, cup_y_train, cup_x_test, cup_y_test] = load_dataset_cup(datasets.cup);
 
-% Testing with monks1 dataset
+
+%% Training and validation sets
+
+% For testing method
+
+% X = cup_x_train(1:200, :);
+% Y = cup_y_train(1:200, :);
+
+% For testing NN
+
 X = monks1_x_train;
 Y = monks1_y_train;
 % X = cup_x_train;
 % Y = cup_y_train;
 
-%% Training and validation sets
 N = size(X, 1);
 train_size = floor(0.8 * N); 
 train_X = X(1:train_size, :);
@@ -87,4 +95,10 @@ plot_results = true;
 sorted_results = sort_cell_matrix_by_column(results, 10, false);
 display_results(sorted_results, plot_results);
 
-%% Testing
+%% NN Analysis
+% Sort results by Evaluation and display it
+%sorted_results = sort_cell_matrix_by_column(results, 6, true);
+%display_results_Cholesky(sorted_results);
+
+% Show results on test set and 
+%test_results = test_Cholesky(sorted_results(1, 1:end-1), test_X, test_Y, W1, W2);
