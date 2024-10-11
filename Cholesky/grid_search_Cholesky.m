@@ -1,15 +1,12 @@
-function [results, W1, W2, W1_train, W2_train] = grid_search_Cholesky(X, Y, X_r, X_c, val_X, val_Y, val_X_r, params)
+function [results, W1, W2, W1_train, W2_train] = grid_search_Cholesky(X, Y, val_X, val_Y, params)
     % Performs a grid search with Cholesky decomposition
     % and evaluates on both training and validation sets.
     %
     % INPUT:
     %   X       - Input data matrix for training.
     %   Y       - Output data matrix for training.
-    %   X_r     - Number of rows in X (training set).
-    %   X_c     - Number of columns in X (training set).
     %   val_X   - Input data matrix for validation.
     %   val_Y   - Output data matrix for validation.
-    %   val_X_r - Number of rows in val_X (validation set).
     %   params  - Struct containing grid search parameters with fields:
     %             activation_functions, activation_functions_names, k_values, lambda_values.
     %
@@ -45,7 +42,7 @@ function [results, W1, W2, W1_train, W2_train] = grid_search_Cholesky(X, Y, X_r,
                 %Training part
                 
                 % Initialize the neural network for the training data
-                nn = NeuralNetwork(X, k, X_r, X_c);
+                nn = NeuralNetwork(X, k, size(X,1), size(X,2));
                 nn = nn.firstLayer(activation_function);
                 nn = nn.secondLayer(size(Y,2));
                 
@@ -60,7 +57,7 @@ function [results, W1, W2, W1_train, W2_train] = grid_search_Cholesky(X, Y, X_r,
 
                 %% Validation step
                 % Initialize the neural network with learned W1 and x_opt
-                val_nn = NeuralNetwork(val_X, k, val_X_r, X_c, nn.W1, x_opt);
+                val_nn = NeuralNetwork(val_X, k, size(val_X,1), size(X, 2), nn.W1, x_opt);
                 val_nn = val_nn.firstLayer(activation_function);
                 val_nn = val_nn.secondLayer(size(val_Y, 2));
                 % Evaluate validation set

@@ -45,11 +45,6 @@ validation_Y = Y(train_size+1:end, :);
 test_X = cup_x_test;
 test_Y = cup_y_test;
 
-% Store size of the sets
-[train_X_r, train_X_c] = size(train_X);
-[validation_X_r, ~] = size(validation_X);
-[test_X_r, ~] = size(test_X);
-
 %% Set the random number generator seed
 rng(17);
 
@@ -67,9 +62,8 @@ params.lambda_values = [5e-4];
 
 % Find best configuration for NN and for Training Method
 [results, W1, W2, W1_train, W2_train] = grid_search_Cholesky(train_X, train_Y, ...
-                                                             train_X_r, train_X_c, ...
                                                              validation_X, validation_Y, ...
-                                                             validation_X_r, params);
+                                                             params);
 
 %% Method analysis
 
