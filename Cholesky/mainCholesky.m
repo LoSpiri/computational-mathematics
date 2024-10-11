@@ -4,6 +4,7 @@ addpath("utils")
 addpath("datasets")
 
 %% Load Datasets
+
 % Define dataset paths
 datasets = struct(...
     'monks1_train', 'datasets/monks/monks-1.train', ...
@@ -46,9 +47,11 @@ test_X = cup_x_test;
 test_Y = cup_y_test;
 
 %% Set the random number generator seed
+
 rng(17);
 
 %% Model Parameters Initialization
+
 % Initialize params as a struct
 params = struct();
 
@@ -76,6 +79,7 @@ comparation_table = methods_comparation(sorted_results_train(1, 1:end-1), ...
                                                     W1_train, train_X, train_Y);
 
 %% NN analysis
+
 % Sort results by Evaluation and display it
 sorted_results = sort_cell_matrix_by_column(results, 6, true);
 display_results_Cholesky(sorted_results);
