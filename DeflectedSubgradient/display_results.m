@@ -1,6 +1,8 @@
 function display_results(results, plot_results)
     % Convert results cell array to table for better visualization
-    results_table = cell2table(results, 'VariableNames', {'ActivationFunction', 'KValue', 'Delta', 'Rho', 'R', 'Lambda', 'MaxIter', 'ElapsedTime', 'Evaluation', 'ValidationEvaluation', 'Status'});
+    results_table = cell2table(results, 'VariableNames', {'ActivationFunction', 'KValue', ...
+                                    'Lambda', 'Rho', 'R', 'Delta', 'MaxIter', 'Status', ...
+                                    'ElapsedTime', 'Evaluation', 'ValidationEvaluation'});
 
     % Display the results table
     disp('Results Summary:');

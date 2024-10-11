@@ -3,6 +3,7 @@ addpath("activation_functions\")
 addpath("utils\")
 
 %% Load Datasets
+
 % Define dataset paths
 datasets = struct(...
     'monks1_train', 'datasets/monks/monks-1.train', ...
@@ -46,9 +47,11 @@ test_Y = monks1_y_test;
 %test_Y = cup_y_test;
 
 %% Set the random number generator seed
+
 rng(17);
 
 %% Parameters Initialization
+
 % Initialize params as a struct
 params = struct();
 
@@ -73,26 +76,24 @@ params = struct();
 
 params.activation_functions = {@relu};
 params.activation_functions_names = {'relu'};
-params.k_values = [8];
-params.delta_values = [0.001];
+params.k_values = [8, 20];
+params.delta_values = [0.001, 0.0001];
 params.rho_values = [0.25];
 params.R_values = [256];
 params.lambda_values = [4e-5];
 params.max_iter = [250];
 
 %% Grid search
-plot_results = false;
-[results, W1, W2] = grid_search(train_X, train_Y, validation_X, validation_Y, ...
-                                 params, plot_results);
 
-% Sort by evaluation and display results
-sorted_results = sort_cell_matrix_by_column(results, 10, false);
-display_results(sorted_results, plot_results);
+plot_results = false;
+[results, W1, W2, W1_train, W2_train] = grid_search(train_X, train_Y, validation_X, ...
+                                 validation_Y, params, plot_results);
 
 %% NN Analysis
+
 % Sort results by Evaluation and display it
-%sorted_results = sort_cell_matrix_by_column(results, 6, true);
-%display_results_Cholesky(sorted_results);
+sorted_results = sort_cell_matrix_by_column(results, 11, true);
+display_results(sorted_results, plot_results);
 
 % Show results on test set and 
-%test_results = test_Cholesky(sorted_results(1, 1:end-1), test_X, test_Y, W1, W2);
+test_results = testDeflected(sorted_results(1, 1:end-1), test_X, test_Y, W1, W2);
