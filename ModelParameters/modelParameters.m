@@ -1,4 +1,13 @@
 function params=modelParameters()
+    % Initializes and returns `params`, a struct with neural network parameters.
+    
+    % OUTPUT:
+    %   params - Struct containing:
+    %     - activation_functions: Cell array of function handles.
+    %     - activation_functions_names: Cell array of function names.
+    %     - k_values: List of neuron counts for hidden layers.
+    %     - lambda_values: List of regularization values.
+
     
     addpath("activation_functions")
     
@@ -8,7 +17,7 @@ function params=modelParameters()
     % Assign values to the fields of params for neural network
     params.activation_functions = {@relu, @tanh, @sigmoid};
     params.activation_functions_names = {'relu', 'tanh', 'sigmoid'};
-    params.k_values = [50];
-    params.lambda_values = [5e-4];
+    params.k_values = [10, 50, 100];
+    params.lambda_values = [5e-4, 1e-5];
 
   

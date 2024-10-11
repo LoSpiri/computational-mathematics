@@ -1,106 +1,163 @@
 function [results, W1, W2, W1_train, W2_train] = grid_search(X, Y, val_X, val_Y, ...
-                                    modelParams, deflectedParams, plot_results)
-    % Performs grid search for the Deflected Subgradient method in a neural network.
-    % Explores multiple combinations of hyperparameters: activation function, k, delta, rho, R, lambda, and max iterations.
-    % 
+                                                modelParams, deflectedParams, plots)
+    % Performs a grid search for hyperparameter optimization
+    % of the Deflected Subgradient method in a neural network. It explores 
+    % different combinations of activation functions, k, lambda, and other 
+    % hyperparameters to find the best model for both training and validation sets.
+    %
     % INPUT:
+    %   X               - Training input data matrix.
+    %   Y               - Training output data matrix.
+    %   val_X           - Validation input data matrix.
+    %   val_Y           - Validation output data matrix.
+    %   modelParams     - Struct containing the grid search parameters, including:
+    %                   - activation_functions
+    %                   - activation_functions_names
+    %                   - k_values
+    %                   - lambda_values
+    %   deflectedParams - Parameters for the Deflected Subgradient method:
+    %                   - rho_values, R_values, delta_values, max_iter
+    %   plots           - Boolean flag to enable/disable plotting during training.
+    %
+    % OUTPUT:
+    %   results  - A cell array with the grid search results for each combination
+    %              of hyperparameters, including validation results and training results.
+    %   W1       - Best first-layer weights for the optimal validation result.
+    %   W2       - Best second-layer weights for the optimal validation result.
+    %   W1_train - Best first-layer weights based on training performance.
+    %   W2_train - Best second-layer weights based on training performance.
+
+    % Initialize the results cell array to store each combination's results
+    num_combinations = numel(modelParams.activation_functions) * ...
+                        numel(modelParams.k_values) * numel(modelParams.lambda_values) * 2;  % 2: for validation and training results
+    results = cell(num_combinations, 11);  
+
+    index = 1;  
+
+    
+    for i = 1:numel(modelParams.activation_functions)
+                          
+        % Extract the current activation function and its name                               
+        act_fun = modelParams.activation_functions{i};                              
+        act_fun_name = modelParams.activation_functions_names{i};  
+
+        for k = modelParams.k_values
+            for lambda = modelParams.lambda_values
+
+                % Call the function to train and evaluate the model with current parameters
+                [results, W1, W2, W1_train, W2_train] = bestDeflected(deflectedParams, ...
+                                                 X, Y, val_X, val_Y, k, lambda, act_fun, ...
+                                                 act_fun_name, index, results, plots);
+                index = index + 2;  
+            end
+        end
+    end
+end
+
+
+
+function [results, W1, W2, W1_train, W2_train] = bestDeflected(params, X, Y, val_X, val_Y, ...
+                                                  k, lambda, act_fun, act_fun_name, index, ...
+                                                  results, plots)
+    % Trains a neural network using Deflected Subgradient 
+    % method and evaluates its performance on both training and validation sets.
+    %
+    % INPUT:
+    %   params       - Deflected Subgradient parameters (rho_values, R_values, delta_values, max_iter).
     %   X            - Training input data.
     %   Y            - Training output data.
     %   val_X        - Validation input data.
     %   val_Y        - Validation output data.
-    %   params       - Grid search parameters: activation_functions, k_values, delta_values, rho_values, R_values, lambda_values, max_iter.
-    %   plot_results - Boolean flag to enable/disable plotting.
+    %   k            - Number of neurons in the first hidden layer.
+    %   lambda       - Regularization parameter.
+    %   act_fun      - Activation function used for the neural network.
+    %   act_fun_name - Name of the activation function (for storing in results).
+    %   index        - Index to store the current combination results in the results array.
+    %   results      - Cell array to store results.
+    %   plots        - Boolean flag to enable/disable plotting during training.
     %
     % OUTPUT:
-    %   results  - Results of the grid search (activation, k, delta, rho, R, lambda, max_iter, time, train eval, validation eval, status).
-    %   W1       - Optimal first layer weights for the best validation result.
-    %   W2       - Optimal second layer weights for the best validation result.
-    %   W1_train - Optimal first layer weights for the best training result.
-    %   W2_train - Optimal second layer weights for the best training result.
+    %   results    - Updated results cell array with training and validation evaluations.
+    %   W1         - Best first-layer weights for the validation set.
+    %   W2         - Best second-layer weights for the validation set.
+    %   W1_train   - Best first-layer weights based on training set evaluation.
+    %   W2_train   - Best second-layer weights based on training set evaluation.
 
+    % Initialize temporary variables for validation and training best scores
+    temp = inf;        
+    temp_train = inf;  
 
-    % Initialize cell array to store results
-    num_combinations = numel(modelParams.activation_functions) * numel(modelParams.k_values) * ...
-                        numel(modelParams.lambda_values) * numel(deflectedParams.rho_values) * ...
-                        numel(deflectedParams.R_values) * numel(deflectedParams.delta_values) * ...
-                        numel(deflectedParams.max_iter);
-    results = cell(num_combinations, 10);
-    index = 1;
+    for rho = params.rho_values
+        for R = params.R_values
+            for delta = params.delta_values
+                for max_iter = params.max_iter
+                
+                %% Training step
 
-    % Initialize a temporary variable to track the best evaluation score
-    temp = inf;
-    % Initialize a temporary variable to track the best training score
-    temp_train=inf;
-
-    % Iterate over all parameter combinations
-    for i = 1:numel(modelParams.activation_functions)
-        for k = modelParams.k_values
-            for lambda = modelParams.lambda_values
-                for rho = deflectedParams.rho_values
-                    for R = deflectedParams.R_values
-                        for delta = deflectedParams.delta_values
-                            for max_iter = deflectedParams.max_iter
-
-                                % Extract the current activation function and its name
-                                activation_function = modelParams.activation_functions{i};
-                                activation_function_name = modelParams.activation_functions_names{i};
+                % Initialize the neural network for training
+                nn = NeuralNetwork(X, k, size(X, 1), size(X, 2)); 
+                nn = nn.firstLayer(act_fun);  
+                nn = nn.secondLayer(size(Y,2));  
                                 
-                                %% Training step
-                                
-                                % Initialize the neural network for the training data
-                                nn = NeuralNetwork(X, k, size(X, 1), size(X, 2));
-                                nn = nn.firstLayer(activation_function);
-                                nn = nn.secondLayer(size(Y,2));
-                                
-                                % Initialize the DeflectedSubgradient object
-                                ds = DeflectedSubgradient(X, Y, nn.W2, delta, rho, R, ...
-                                                  max_iter, nn.U, Y, lambda, plot_results);
-                                % Compute the minum with DeflectedSubgradient
-                                [x_opt, ds, status] = ds.compute_deflected_subgradient();
-                                eval = ds.evaluate_result(x_opt);
+                % Initialize the Deflected Subgradient object with training parameters
+                ds = DeflectedSubgradient(X, Y, nn.W2, delta, rho, R, ...
+                                        max_iter, nn.U, Y, lambda, plots);
+                % Optimize the network using Deflected Subgradient method
+                [x_opt, ds, status] = ds.compute_deflected_subgradient();
+                eval = ds.evaluate_result(x_opt);  
 
-                                %% Validation step
+                %% Validation step
 
-                                % Initialize the neural network with learned W1 and x_opt
-                                val_nn = NeuralNetwork(val_X, k, size(val_X, 1), size(X,2), nn.W1, x_opt);
-                                val_nn = val_nn.firstLayer(activation_function);
-                                val_nn = val_nn.secondLayer(size(val_Y, 2));
-                                % Evaluate validation set
-                                validation_evaluation = val_nn.evaluateModel(val_Y, val_nn.W2);
+                % Initialize the neural network with trained W1 and the optimized W2
+                val_nn = NeuralNetwork(val_X, k, size(val_X, 1), size(X, 2), nn.W1, x_opt);
+                val_nn = val_nn.firstLayer(act_fun);  
+                val_nn = val_nn.secondLayer(size(val_Y, 2));  
+                % Evaluate the model on the validation set
+                validation_evaluation = val_nn.evaluateModel(val_Y, val_nn.W2);
 
-                                %% Store results 
+                %% Store results 
 
-                                results{index, 1}  = activation_function_name;
-                                results{index, 2}  = k;
-                                results{index, 3}  = lambda;
-                                results{index, 4}  = rho;
-                                results{index, 5}  = R;
-                                results{index, 6}  = delta;
-                                results{index, 7}  = max_iter;
-                                results{index, 8} = status;
-                                results{index, 9}  = ds.elapsed_time;
-                                results{index, 10}  = eval;
-                                results{index, 11} = validation_evaluation;
-                                index = index + 1;
+                % Save the best configuration based on validation result
+                if validation_evaluation < temp
+                    temp = validation_evaluation;  
+                    W1 = nn.W1;  
+                    W2 = x_opt; 
 
-                                % Save the best configuration based on validation result
-                                if validation_evaluation < temp
-                                    temp = validation_evaluation;
-                                    W1 = nn.W1;
-                                    W2 = x_opt;
-                                end
-
-                                % Save the best configuration based on train result
-                                if eval < temp_train
-                                    temp_train = eval;
-                                    W1_train = nn.W1;
-                                    W2_train = x_opt;
-                                end
-
-                            end
-                        end
-                    end
+                    % Store the results for the best validation result
+                    results{index, 1}  = act_fun_name;  
+                    results{index, 2}  = k;  
+                    results{index, 3}  = lambda;  
+                    results{index, 4}  = rho;  
+                    results{index, 5}  = R;  
+                    results{index, 6}  = delta; 
+                    results{index, 7}  = max_iter;  
+                    results{index, 8}  = status;  
+                    results{index, 9}  = ds.elapsed_time;  
+                    results{index, 10} = eval;  
+                    results{index, 11} = validation_evaluation; 
                 end
+
+                % Save the best configuration based on train result
+                if eval < temp_train
+                    temp_train = eval;  
+                    W1_train = nn.W1; 
+                    W2_train = x_opt;  
+
+                    % Store the results for the training result
+                    results{index+1, 1}  = act_fun_name;  
+                    results{index+1, 2}  = k;  
+                    results{index+1, 3}  = lambda;  
+                    results{index+1, 4}  = rho;  
+                    results{index+1, 5}  = R;  
+                    results{index+1, 6}  = delta;  
+                    results{index+1, 7}  = max_iter;  
+                    results{index+1, 8}  = status;  
+                    results{index+1, 9}  = ds.elapsed_time;  
+                    results{index+1, 10} = eval;  
+                    results{index+1, 11} = validation_evaluation; 
+                end
+
+                end                        
             end
         end
     end

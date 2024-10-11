@@ -21,25 +21,22 @@ datasets = struct(...
 [cup_x_train, cup_y_train, cup_x_test, cup_y_test] = load_dataset_cup(datasets.cup);
 
 
-%% Training , Validation and Test sets
+%% Training, Validation and Test sets
 
 % For testing method
 
-% X = cup_x_train(1:200, :);
-% Y = cup_y_train(1:200, :);
+%X = cup_x_train(1:200, :);
+%Y = cup_y_train(1:200, :);
 
 % For testing NN
 
-% X = monks3_x_train;
-% Y = monks3_y_train;
+%X = monks3_x_train;
+%Y = monks3_y_train;
 X = cup_x_train;
 Y = cup_y_train;
 
-train_size = floor(0.8 * size(X, 1)); 
-train_X = X(1:train_size, :);
-validation_X = X(train_size+1:end, :);
-train_Y = Y(1:train_size, :);
-validation_Y = Y(train_size+1:end, :);
+% Divide X and Y in train and validation sets
+[train_X, train_Y, validation_X, validation_Y]=createValidation(X, Y, 0.8);
 
 % test_X = monks3_x_test;
 % test_Y = monks3_y_test;
@@ -68,14 +65,16 @@ sorted_results_train = sort_cell_matrix_by_column(results, 5, true);
 
 Cholesky_Insights(sorted_results_train(1, 1:end-1), W1_train, train_X, train_Y);
 
-comparation_table = methods_comparation(sorted_results_train(1, 1:end-1), ...
+comparation_table = methods_comparation(sorted_results_train(1, 1:end), ...
                                                     W1_train, train_X, train_Y);
 
 %% NN analysis
 
 % Sort results by Evaluation and display it
 sorted_results = sort_cell_matrix_by_column(results, 6, true);
-display_results_Cholesky(sorted_results);
+
+plots=true;
+display_results_Cholesky(sorted_results, plots);
 
 % Show results on test set and 
 test_results = test_Cholesky(sorted_results(1, 1:end), test_X, test_Y, W1, W2);

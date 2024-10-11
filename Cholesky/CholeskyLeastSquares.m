@@ -56,6 +56,7 @@ classdef CholeskyLeastSquares
             % Solve the system using the Cholesky factorization
             % R'R = AtA
             % Solve R'y = AtB using forward substitution
+
             tic; % Start timing
             y = obj.forwardSubstitution(obj.R', obj.AtB);
             % Solve Rx = y using backward substitution
@@ -66,6 +67,7 @@ classdef CholeskyLeastSquares
         function y = forwardSubstitution(~, L, b)
             % Forward substitution to solve Ly = b
             % L is a lower triangular matrix
+
             n = size(L, 1);
             y = zeros(n, size(b, 2));
             for i = 1:n
@@ -76,6 +78,7 @@ classdef CholeskyLeastSquares
         function x = backwardSubstitution(~, Q, y)
             % Backward substitution to solve Qx = y
             % Q is an upper triangular matrix
+
             n = size(Q, 1);
             x = zeros(n, size(y, 2));
             for i = n:-1:1
@@ -85,6 +88,7 @@ classdef CholeskyLeastSquares
 
         function objective_value = evaluateResult(obj, x_opt)
             % Evaluate the result and print the objective function value
+            
             residual = obj.A * x_opt - obj.B;
             frob_norm_squared = sum(sum(residual.^2));
             objective_value = (1 / (2 * obj.N)) * frob_norm_squared;

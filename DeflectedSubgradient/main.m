@@ -35,12 +35,8 @@ Y = monks1_y_train;
 % X = cup_x_train;
 % Y = cup_y_train;
 
-N = size(X, 1);
-train_size = floor(0.8 * N); 
-train_X = X(1:train_size, :);
-validation_X = X(train_size+1:end, :);
-train_Y = Y(1:train_size, :);
-validation_Y = Y(train_size+1:end, :);
+% Divide X and Y in train and validation sets
+[train_X, train_Y, validation_X, validation_Y]=createValidation(X, Y, 0.8);
 
 test_X = monks1_x_test;
 test_Y = monks1_y_test;
