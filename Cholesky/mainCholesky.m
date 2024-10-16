@@ -1,5 +1,5 @@
 clear variables;
-addpath("ModelParameters/")
+addpath("Model/")
 addpath("utils/")
 addpath("datasets/")
 
