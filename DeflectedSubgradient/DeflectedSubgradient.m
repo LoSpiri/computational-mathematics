@@ -59,7 +59,7 @@ classdef DeflectedSubgradient
                 f_values(i) = h;
                 norm_g_values(i) = sqrt(frobenius_norm_squared(g_i));
         
-                if sqrt(frobenius_norm_squared(g_i)) < 1e-12
+                if sqrt(frobenius_norm_squared(g_i)) < 1e-6
                     exit_status = "STOP CONDITION g_i";
                     break;
                 end
@@ -171,29 +171,6 @@ classdef DeflectedSubgradient
             end
         end
 
-        % function plot_surface(obj)
-        %     % Define the reduced cost function for plotting
-        %     function f = cost(x)
-        %         A_proj = obj.A(:, 1:2); % Use only the first two columns for projection
-        %         f = 0.5 * x' * (A_proj' * A_proj) * x - obj.b(1:2)' * x; % Adjust to 2D projection
-        %     end
-        % 
-        %     [XX, YY] = meshgrid(obj.interval_x1, obj.interval_x2);
-        %     X = XX(:); 
-        %     Y = YY(:); 
-        %     Z = zeros(size(X)); % Initialize Z for storing cost values
-        % 
-        %     % Calculate the cost for each (X, Y) pair
-        %     for i = 1:length(X)
-        %         Z(i) = cost([X(i); Y(i)]);
-        %     end
-        % 
-        %     % Reshape Z into the grid for contour plotting
-        %     ZZ = reshape(Z, size(XX));
-        %     contour(XX, YY, ZZ); % Plot the contour
-        %     hold on;
-        % end
-
         function plot_surface(obj, x_i)
             % Define the reduced cost function for plotting
             function f = cost(x)
@@ -241,34 +218,6 @@ classdef DeflectedSubgradient
     end
 
     methods (Static, Access = private)
-        % function gamma_i = update_gamma(g_i, d_i)
-        %     norm_g_i = frobenius_norm_squared(g_i);
-        %     norm_d_i = frobenius_norm_squared(d_i);
-        %     dot_product = sum(sum(g_i .* d_i));
-        % 
-        %     % gamma_i = (norm_d_i - dot_product) / (norm_g_i + norm_d_i - 2 * dot_product);
-        % 
-        %     % Calculate the denominator
-        %     denominator = norm_g_i + norm_d_i - 2 * dot_product;
-        % 
-        %     eps = 0.00000001;
-        %     % Check if the denominator is too close to zero
-        %     if abs(denominator) < eps
-        %         % Handle near-zero denominator by setting gamma_i to a default value
-        %         gamma_i = 0.5;  % You can set a reasonable default value
-        %     else
-        %         % Compute gamma_i
-        %         gamma_i = (norm_d_i - dot_product) / denominator;
-        % 
-        %         % Ensure gamma_i is within the range [0, 1]
-        %         if gamma_i < 0
-        %             gamma_i = 0.1;  % Set to 0.1 if it's less than 0
-        %         elseif gamma_i > 1
-        %             gamma_i = 0.9;  % Set to 0.9 if it's greater than 1
-        %         end
-        %     end
-        % end
-
         function gamma_i = update_gamma(g_i, d_i)
             v = g_i - d_i;
         

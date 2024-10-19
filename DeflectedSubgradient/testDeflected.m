@@ -19,7 +19,7 @@ function test_results=testDeflected(results, X, Y, W1, W2)
     %Evaluate test set
     result=test_nn.evaluateModel(Y, test_nn.W2);
     
-    test_results{1, 1} = 'DeflectedSubgradiente';
+    test_results{1, 1} = 'DeflectedSubgradient';
     test_results{1, 2} = activation_func;
     test_results{1, 3} = k;
     test_results{1, 4} = lambda;

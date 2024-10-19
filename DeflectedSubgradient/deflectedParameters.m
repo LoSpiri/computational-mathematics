@@ -4,10 +4,10 @@ function params=deflectedParameters()
     params = struct();
     
     % Assign values to the fields of params for neural network
-    params.delta_values = [0.001, 0.0001];
-    params.rho_values = [0.2, 0.25, 0.3];
-    params.R_values = [256, 300, 350, 400];
-    params.max_iter = [250, 300, 350, 400];
+    params.delta_values = [0.001];
+    params.rho_values = [0.2];
+    params.R_values = [256];
+    params.max_iter = [250];
 
     % Assign values to the fields of params
     % params.activation_functions = {@relu};

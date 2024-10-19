@@ -9,7 +9,7 @@ function params=modelParameters()
     %     - lambda_values: List of regularization values.
 
     
-    addpath("activation_functions")
+    addpath("Model/activation_functions")
     
     % Initialize params as a struct
     params = struct();
@@ -17,7 +17,7 @@ function params=modelParameters()
     % Assign values to the fields of params for neural network
     params.activation_functions = {@relu, @tanh, @sigmoid};
     params.activation_functions_names = {'relu', 'tanh', 'sigmoid'};
-    params.k_values = [10, 20, 50, 500];
-    params.lambda_values = [5e-3, 1e-4, 5e-4, 1e-5];
+    params.k_values = [10, 20];
+    params.lambda_values = [5e-3];
 
   
