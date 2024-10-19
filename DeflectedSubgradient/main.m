@@ -30,18 +30,18 @@ datasets = struct(...
 
 % For testing NN
 
-% X = monks1_x_train;
-% Y = monks1_y_train;
-X = cup_x_train;
-Y = cup_y_train;
+X = monks1_x_train;
+Y = monks1_y_train;
+% X = cup_x_train;
+% Y = cup_y_train;
 
 % Divide X and Y in train and validation sets
 [train_X, train_Y, validation_X, validation_Y]=createValidation(X, Y, 0.8);
 
-% test_X = monks1_x_test;
-% test_Y = monks1_y_test;
-test_X = cup_x_test;
-test_Y = cup_y_test;
+test_X = monks1_x_test;
+test_Y = monks1_y_test;
+% test_X = cup_x_test;
+% test_Y = cup_y_test;
 
 %% Set the random number generator seed
 
@@ -56,7 +56,7 @@ deflectedParams=deflectedParameters();
 
 plot_results = true;
 [results, W1, W2, W1_train, W2_train] = grid_search(train_X, train_Y, validation_X, ...
-                                 validation_Y, modelParams, deflectedParams, false);
+                                 validation_Y, modelParams, deflectedParams, true);
 
 %% Method Analysis
 

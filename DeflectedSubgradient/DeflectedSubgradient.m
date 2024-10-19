@@ -45,6 +45,8 @@ classdef DeflectedSubgradient
             alpha_values = zeros(1, obj.max_iter);
             gamma_values = zeros(1, obj.max_iter);
             d_values = zeros(1, obj.max_iter);
+            err_values = zeros(1, obj.max_iter);
+            g_bar = 0.048082;
             best_result = struct('Iteration', 0, 'FunctionValue', f_x);
             exit_status = "";
 
@@ -106,6 +108,8 @@ classdef DeflectedSubgradient
                     best_result.Iteration = i;
                     best_result.X = x_i;
                 end
+                
+                err_values(i) = abs(sqrt(frobenius_norm_squared(g_i)) - g_bar) / g_bar;
             end
             exit_status = "MAX ITER";
             x_opt = x_i;
@@ -113,7 +117,7 @@ classdef DeflectedSubgradient
 
             if obj.plot_results
                 title('DeflectedSubgradient descent');
-                obj.plot(f_values, norm_g_values, alpha_values, gamma_values, d_values);
+                obj.plot(f_values, norm_g_values, alpha_values, gamma_values, d_values, err_values);
             end
         end
 
@@ -239,7 +243,7 @@ classdef DeflectedSubgradient
             end
         end
 
-        function plot(f_values, norm_g_values, alpha_values, gamma_values, d_values)
+        function plot(f_values, norm_g_values, alpha_values, gamma_values, d_values, err_values)
             figure;
             subplot(5,1,1);
             plot(f_values, 'LineWidth', 2);
@@ -270,6 +274,26 @@ classdef DeflectedSubgradient
             title('d over Iterations');
             xlabel('Iteration');
             ylabel('d_i');
+
+            % Determine the number of iterations
+            num_iters = length(err_values);
+            
+            % Create an array for iteration numbers (x-axis)
+            iter_numbers = 1:num_iters;
+        
+            % Create a figure for the plot
+            figure;
+        
+            % Plot err_values against iteration numbers
+            plot(iter_numbers, err_values, 'o-', 'LineWidth', 2, 'MarkerSize', 8);
+        
+            % Add labels and title
+            xlabel('Iteration Number');
+            ylabel('Relative Error');
+            title('Relative Error vs. Iteration');
+        
+            % Add grid for better visibility
+            grid on;
         end
 
         function update_axis_limits(points)
