@@ -117,7 +117,7 @@ classdef DeflectedSubgradient
 
             if obj.plot_results
                 title('DeflectedSubgradient descent');
-                obj.plot(f_values, norm_g_values, alpha_values, gamma_values, d_values, err_values);
+                obj.plot(f_values, alpha_values, gamma_values, d_values, err_values);
             end
         end
 
@@ -243,33 +243,27 @@ classdef DeflectedSubgradient
             end
         end
 
-        function plot(f_values, norm_g_values, alpha_values, gamma_values, d_values, err_values)
+        function plot(f_values, alpha_values, gamma_values, d_values, err_values)
             figure;
-            subplot(5,1,1);
+            subplot(4,1,1);
             plot(f_values, 'LineWidth', 2);
             title('Function Value over Iterations');
             xlabel('Iteration');
             ylabel('f(x)');
         
-            subplot(5,1,2);
-            plot(norm_g_values, 'LineWidth', 2);
-            title('Norm of Subgradient over Iterations');
-            xlabel('Iteration');
-            ylabel('||g(x)||');
-        
-            subplot(5,1,3);
+            subplot(4,1,2);
             plot(alpha_values, 'LineWidth', 2);
             title('Step Size over Iterations');
             xlabel('Iteration');
             ylabel('alpha');
         
-            subplot(5,1,4);
+            subplot(4,1,3);
             plot(gamma_values, 'LineWidth', 2);
             title('Gamma over Iterations');
             xlabel('Iteration');
             ylabel('gamma');
 
-            subplot(5,1,5);
+            subplot(4,1,4);
             plot(d_values, 'LineWidth', 2);
             title('d over Iterations');
             xlabel('Iteration');
