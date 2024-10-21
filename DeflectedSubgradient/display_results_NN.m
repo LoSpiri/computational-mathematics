@@ -4,22 +4,31 @@ function display_results_NN(results, plot_results)
     % Convert results cell array to table for better visualization
     results_table = cell2table(results, 'VariableNames', {'ActivationFunction', 'KValue', ...
                                     'Lambda', 'Rho', 'R', 'Delta', 'MaxIter', 'Status', ...
-                                    'ElapsedTime', 'Evaluation', 'ValidationEvaluation'});
+                                    'ElapsedTime', 'Evaluation', 'ValidationEvaluation', 'Temp'});
 
     % Remove duplicate rows
     results_table = unique(results_table, 'rows', 'stable');
 
     % Display the results table
     disp('Results Summary:');
-    disp(results_table);
+    disp(results_table(:, 1:11));
 
     % Find the best result based on evaluation metric (lower is better)
     [~, best_idx] = min(results_table.ValidationEvaluation);
     best_result = results_table(best_idx, :);
     fprintf('Best Configuration for Neural Network:\n');
-    disp(best_result);
+    disp(best_result(:, 1:11));
 
-    if plot_results == true
-        plot_metric(results_table, 'KValue', {'Evaluation', 'ValidationEvaluation'}, 'K Value', 'Validation and Evaluation', 'Loss by K values during Model execution')
+    if plot_results == true        % Filter the table to keep rows where the hyperparameters match the best result
+        filtered_table = results_table(...
+            strcmp(results_table.ActivationFunction, best_result.ActivationFunction) & ...
+            results_table.Lambda == best_result.Lambda & ...
+            results_table.Temp ==best_result.Temp, :);
+
+        % Sort filtered table by ValidationEvaluation to keep the minimum value for each KValue
+        % [~, min_idx] = sort(filtered_table.ValidationEvaluation, 'ascend');
+        % filtered_table = filtered_table(min_idx, :);
+
+        plot_metric(filtered_table, 'KValue', {'Evaluation', 'ValidationEvaluation'}, 'K Value', 'Validation and Evaluation', 'Loss by K values during Model execution')
     end
 end

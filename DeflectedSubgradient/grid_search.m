@@ -30,7 +30,7 @@ function [results, W1, W2, W1_train, W2_train] = grid_search(X, Y, val_X, val_Y,
     % Initialize the results cell array to store each combination's results
     num_combinations = numel(modelParams.activation_functions) * ...
                         numel(modelParams.k_values) * numel(modelParams.lambda_values) * 2;  % 2: for validation and training results
-    results = cell(num_combinations, 11);  
+    results = cell(num_combinations, 12);  
 
     index = 1;  
 
@@ -134,7 +134,8 @@ function [results, W1, W2, W1_train, W2_train] = bestDeflected(params, X, Y, val
                     results{index, 8}  = status;  
                     results{index, 9}  = ds.elapsed_time;  
                     results{index, 10} = eval;  
-                    results{index, 11} = validation_evaluation; 
+                    results{index, 11} = validation_evaluation;
+                    results{index, 12} = "nn";
                 end
 
                 % Save the best configuration based on train result
@@ -154,7 +155,8 @@ function [results, W1, W2, W1_train, W2_train] = bestDeflected(params, X, Y, val
                     results{index+1, 8}  = status;  
                     results{index+1, 9}  = ds.elapsed_time;  
                     results{index+1, 10} = eval;  
-                    results{index+1, 11} = validation_evaluation; 
+                    results{index+1, 11} = validation_evaluation;
+                    results{index+1, 12} = "method";
                 end
 
                 end                        
