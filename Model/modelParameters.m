@@ -14,10 +14,15 @@ function params=modelParameters()
     % Initialize params as a struct
     params = struct();
     
-    % Assign values to the fields of params for neural network
-    params.activation_functions = {@relu, @tanh, @sigmoid};
-    params.activation_functions_names = {'relu', 'tanh', 'sigmoid'};
-    params.k_values = [18, 22, 26, 30];
-    params.lambda_values = [5e-4, 1e-4, 1e-5];
+    % % Assign values to the fields of params for neural network
+    % params.activation_functions = {@relu, @tanh, @sigmoid};
+    % params.activation_functions_names = {'relu', 'tanh', 'sigmoid'};
+    % params.k_values = [18, 22, 26, 30];
+    % params.lambda_values = [5e-4, 1e-4, 1e-5];
 
+    % Assign values to the fields of params for neural network
+    params.activation_functions = {@sigmoid};
+    params.activation_functions_names = {'sigmoid'};
+    params.k_values = [70];
+    params.lambda_values = [5e-4];
   
