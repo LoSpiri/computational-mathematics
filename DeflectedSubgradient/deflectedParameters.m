@@ -12,5 +12,5 @@ function params=deflectedParameters()
     % Assign values to the fields of params for neural network
     params.delta_values = [0.001, 0.01];
     params.rho_values = [0.15, 0.2];
-    params.R_values = [250];
-    params.max_iter = [100];
+    params.R_values = [250, 300];
+    params.max_iter = [100], 300;

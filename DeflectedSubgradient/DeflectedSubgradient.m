@@ -50,10 +50,10 @@ classdef DeflectedSubgradient
             best_result = struct('Iteration', 0, 'FunctionValue', f_x);
             exit_status = "";
 
-            if obj.plot_results
-                figure;
-                obj.plot_surface(x_i);
-            end
+            % if obj.plot_results
+            %     figure;
+            %     obj.plot_surface(x_i);
+            % end
         
             for i = 1:obj.max_iter
                 g_i = obj.compute_subgradient(x_i);

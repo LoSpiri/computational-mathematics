@@ -67,7 +67,7 @@ display_results_method(sorted_results(:, 1:11), true);
 
 % Sort results by Evaluation and display it
 sorted_results = sort_cell_matrix_by_column(results, 11, true);
-display_results_NN(sorted_results, false);
+display_results_NN(sorted_results, true);
 %display(sorted_results(1, 1:end))
 
 % Show results on test set and 
