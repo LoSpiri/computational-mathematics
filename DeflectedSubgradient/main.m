@@ -61,7 +61,7 @@ plot_results = true;
 %% Method Analysis
 
 sorted_results = sort_cell_matrix_by_column(results, 10, false);
-display_results_method(sorted_results(:, 1:11), true);
+display_results_method(sorted_results(:, 1:12), X, Y, true);
 
 %% NN Analysis
 

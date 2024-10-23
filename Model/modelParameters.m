@@ -23,6 +23,6 @@ function params=modelParameters()
     % Assign values to the fields of params for neural network
     params.activation_functions = {@sigmoid};
     params.activation_functions_names = {'sigmoid'};
-    params.k_values = [70];
-    params.lambda_values = [5e-4];
+    params.k_values = [500];
+    params.lambda_values = [1e-4];
   

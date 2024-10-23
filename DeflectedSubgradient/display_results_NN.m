@@ -4,10 +4,13 @@ function display_results_NN(results, plot_results)
     % Convert results cell array to table for better visualization
     results_table = cell2table(results, 'VariableNames', {'ActivationFunction', 'KValue', ...
                                     'Lambda', 'Rho', 'R', 'Delta', 'MaxIter', 'Status', ...
-                                    'ElapsedTime', 'Evaluation', 'ValidationEvaluation', 'Temp'});
+                                    'ElapsedTime', 'Evaluation', 'ValidationEvaluation', 'ValuesArrays', 'Temp'});
 
     % Remove duplicate rows
-    results_table = unique(results_table, 'rows', 'stable');
+    results_no_values_arrays = removevars(results_table, {'ValuesArrays'});
+    results_no_values_arrays = removevars(results_no_values_arrays, {'Temp'});
+    [~, unique_idx] = unique(results_no_values_arrays, 'rows', 'stable');
+    results_table = results_table(unique_idx, :);
 
     % Display the results table
     disp('Results Summary:');

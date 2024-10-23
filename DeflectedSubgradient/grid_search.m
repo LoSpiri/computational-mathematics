@@ -98,13 +98,13 @@ function [results, W1, W2, W1_train, W2_train] = bestDeflected(params, X, Y, val
                 nn = NeuralNetwork(X, k, size(X, 1), size(X, 2)); 
                 nn = nn.firstLayer(act_fun);  
                 nn = nn.secondLayer(size(Y,2));  
-                                
+
                 % Initialize the Deflected Subgradient object with training parameters
                 ds = DeflectedSubgradient(X, Y, nn.W2, delta, rho, R, ...
-                                        max_iter, nn.U, Y, lambda, plots);
+                                        max_iter, nn.U, lambda, plots);
                 % Optimize the network using Deflected Subgradient method
-                [x_opt, ds, status] = ds.compute_deflected_subgradient();
-                eval = ds.evaluate_result(x_opt);  
+                [x_opt, values_arrays, ds, status] = ds.compute_deflected_subgradient();
+                eval = ds.evaluate_f(x_opt); 
 
                 %% Validation step
 
@@ -135,7 +135,8 @@ function [results, W1, W2, W1_train, W2_train] = bestDeflected(params, X, Y, val
                     results{index, 9}  = ds.elapsed_time;  
                     results{index, 10} = eval;  
                     results{index, 11} = validation_evaluation;
-                    results{index, 12} = "nn";
+                    results{index, 12} = values_arrays;
+                    results{index, 13} = "nn";
                 end
 
                 % Save the best configuration based on train result
@@ -156,7 +157,8 @@ function [results, W1, W2, W1_train, W2_train] = bestDeflected(params, X, Y, val
                     results{index+1, 9}  = ds.elapsed_time;  
                     results{index+1, 10} = eval;  
                     results{index+1, 11} = validation_evaluation;
-                    results{index+1, 12} = "method";
+                    results{index+1, 12} = values_arrays;
+                    results{index+1, 13} = "method";
                 end
 
                 end                        
