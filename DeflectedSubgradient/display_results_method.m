@@ -25,7 +25,7 @@ function display_results_method(results, X, Y, plot_results, plot_graphs)
 
     % Plot metric if plot_results is true
     if plot_results
-        plot_metric(results_table, 'ElapsedTime', {'MaxIter'}, 'Elapsed time', 'Max Iterations', 'Elapsed time during method execution')
+        plot_time_by_max_iterations(results_table);
     end
 
     % Plot iteration graphs if plot_graphs is true
@@ -87,6 +87,16 @@ function plot_log_relative_error_by_iteration(values_arrays)
     xlabel('Iteration Number');
     ylabel('Relative Error');
     title('Relative Error vs. Iteration (Logarithmic Scale)');
+    grid on;
+end
+
+function plot_time_by_max_iterations(results_table)
+    results_table = sortrows(results_table, 'ElapsedTime');
+    figure;
+    plot(results_table.ElapsedTime, results_table.MaxIter, 'o-', 'Color', 'b', 'MarkerSize', 10, 'LineWidth', 2);
+    xlabel('Elapsed time');
+    ylabel('Max Iterations');
+    title('Elapsed time during method execution');
     grid on;
 end
 
