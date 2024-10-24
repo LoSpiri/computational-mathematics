@@ -120,7 +120,6 @@ classdef DeflectedSubgradient
             normalization_factor = 1 / (2 * obj.N);
             f_x = normalization_factor * L_m + obj.lambda * L_r;
         end
-
     end
 
     methods (Access = private)

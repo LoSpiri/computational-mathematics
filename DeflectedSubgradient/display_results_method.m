@@ -88,8 +88,6 @@ function plot_log_relative_error_by_iteration(values_arrays)
     ylabel('Relative Error');
     title('Relative Error vs. Iteration (Logarithmic Scale)');
     grid on;
-
-    drawnow;
 end
 
 function plot_descent(values_arrays, X, Y)
@@ -111,6 +109,7 @@ function plot_surface(x_i, X, Y)
         
         f = 0.5 * x' * (A_proj' * A_proj) * x - b_proj' * x;
     end
+    figure;
 
     % Set a larger initial dynamic range around the initial point x_i
     buffer = 1.0;
