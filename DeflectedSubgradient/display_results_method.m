@@ -88,6 +88,8 @@ function plot_log_relative_error_by_iteration(values_arrays)
     ylabel('Relative Error');
     title('Relative Error vs. Iteration (Logarithmic Scale)');
     grid on;
+
+    drawnow;
 end
 
 function plot_descent(values_arrays, X, Y)
