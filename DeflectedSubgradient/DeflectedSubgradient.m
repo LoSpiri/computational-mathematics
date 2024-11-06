@@ -50,7 +50,7 @@ classdef DeflectedSubgradient
             d_values = zeros(1, obj.max_iter);
             err_values = zeros(1, obj.max_iter);
             x_values = cell(1, obj.max_iter);
-            y_bar = 0.098082;
+            y_bar = 0.071548;
             exit_status = "";
             
             %% Start iterating
@@ -120,6 +120,7 @@ classdef DeflectedSubgradient
             normalization_factor = 1 / (2 * obj.N);
             f_x = normalization_factor * L_m + obj.lambda * L_r;
         end
+
     end
 
     methods (Access = private)
@@ -158,6 +159,10 @@ classdef DeflectedSubgradient
             min_alpha = 1e-2;
             if alpha_i < min_alpha
                 alpha_i = min_alpha;
+            end
+
+            if alpha_i > 1
+                alpha_i=1;
             end
         end
     end

@@ -25,23 +25,23 @@ datasets = struct(...
 
 % For testing method
 
-%X = cup_x_train(1:250, :);
-%Y = cup_y_train(1:250, :);
+X = cup_x_train(1:200, :);
+Y = cup_y_train(1:200, :);
 
 % For testing NN
 
-X = monks2_x_train;
-Y = monks2_y_train;
+% X = monks2_x_train;
+% Y = monks2_y_train;
 % X = cup_x_train;
 % Y = cup_y_train;
 
 % Divide X and Y in train and validation sets
 [train_X, train_Y, validation_X, validation_Y]=createValidation(X, Y, 0.8);
 
-test_X = monks2_x_test;
-test_Y = monks2_y_test;
-% test_X = cup_x_test;
-% test_Y = cup_y_test;
+% test_X = monks2_x_test;
+% test_Y = monks2_y_test;
+test_X = cup_x_test;
+test_Y = cup_y_test;
 
 %% Set the random number generator seed
 

@@ -32,21 +32,6 @@ function display_results_NN(results, plot_results)
         % [~, min_idx] = sort(filtered_table.ValidationEvaluation, 'ascend');
         % filtered_table = filtered_table(min_idx, :);
 
-        plot_loss_by_eval(filtered_table);
+        plot_metric(filtered_table, 'KValue', {'Evaluation', 'ValidationEvaluation'}, 'K Value', 'Validation and Evaluation', 'Loss by K values during Model execution')
     end
-end
-
-function plot_loss_by_eval(filtered_table)
-    filtered_table = sortrows(filtered_table, 'KValue');
-    figure;
-    plot(filtered_table.KValue, filtered_table.Evaluation, 'o-', 'LineWidth', 2, 'DisplayName', 'Evaluation');
-    hold on;
-    plot(filtered_table.KValue, filtered_table.ValidationEvaluation, 'o-', 'LineWidth', 2, 'DisplayName', 'ValidationEvaluation');
-    
-    xlabel('K Value');
-    ylabel('Validation and Evaluation');
-    title('Loss by K values during Model execution');
-    legend('show');
-    grid on;
-    hold off;
 end
