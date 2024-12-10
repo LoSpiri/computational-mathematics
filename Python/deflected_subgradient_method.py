@@ -30,6 +30,8 @@ class DeflectedSubgradientMethod:
         self.gamma_history = []  # To store gamma values
         self.gradient_norm_history = []  # To store ||g|| values
         self.relative_error_history = []  # To store relative error with respect to y_bar
+        self.change_delta = []
+        self.r_history = []
 
     def compute_deflected_subgradient(self):
         r = 0
@@ -78,6 +80,9 @@ class DeflectedSubgradientMethod:
                 r = 0
             else:
                 r = r + alpha * np.sqrt(self.__frobenius_norm_squared(d))
+            
+            self.change_delta.append(self.delta)
+            self.r_history.append(r)
         
         return x
 
@@ -99,7 +104,7 @@ class DeflectedSubgradientMethod:
         d_frobenius_squared = self.__frobenius_norm_squared(d)
         numerator = f_x - f_ref + self.delta
         alpha = beta * (numerator / d_frobenius_squared)
-        min_alpha = 0.001
+        min_alpha = 0.0001
         return np.clip(alpha, min_alpha, 1)
 
     def __compute_gamma(self, g, d):
@@ -194,6 +199,44 @@ class DeflectedSubgradientMethod:
             plt.title("Relative Error Over Iterations (Log Scale)")
         else:
             plt.title("Relative Error Over Iterations")
+        plt.grid()
+        plt.legend()
+        plt.show()
+        
+    def plot_delta(self, log_scale=False):
+        """
+        Plots the relative error between f_x and y_bar over iterations.
+        """
+        iterations = range(len(self.change_delta))
+        
+        plt.figure(figsize=(8, 6))
+        plt.plot(iterations, self.change_delta, label="Delta", marker='o', color='purple')
+        plt.xlabel("Iterations")
+        plt.ylabel("Delta")
+        if log_scale:
+            plt.yscale('log')
+            plt.title("Delta over iterations")
+        else:
+            plt.title("Delta over iterations")
+        plt.grid()
+        plt.legend()
+        plt.show()
+        
+    def plot_r(self, log_scale=False):
+        """
+        Plots the relative error between f_x and y_bar over iterations.
+        """
+        iterations = range(len(self.r_history))
+        
+        plt.figure(figsize=(8, 6))
+        plt.plot(iterations, self.r_history, label="r", marker='o', color='purple')
+        plt.xlabel("Iterations")
+        plt.ylabel("r")
+        if log_scale:
+            plt.yscale('log')
+            plt.title("r over iterations")
+        else:
+            plt.title("r over iterations")
         plt.grid()
         plt.legend()
         plt.show()
