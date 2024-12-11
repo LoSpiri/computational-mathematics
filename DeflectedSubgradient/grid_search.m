@@ -1,5 +1,5 @@
 function [results, W1, W2, W1_train, W2_train] = grid_search(X, Y, val_X, val_Y, ...
-                                                modelParams, deflectedParams, plots)
+                                                modelParams, deflectedParams)
     % Performs a grid search for hyperparameter optimization
     % of the Deflected Subgradient method in a neural network. It explores 
     % different combinations of activation functions, k, lambda, and other 
@@ -17,7 +17,6 @@ function [results, W1, W2, W1_train, W2_train] = grid_search(X, Y, val_X, val_Y,
     %                   - lambda_values
     %   deflectedParams - Parameters for the Deflected Subgradient method:
     %                   - rho_values, R_values, delta_values, max_iter
-    %   plots           - Boolean flag to enable/disable plotting during training.
     %
     % OUTPUT:
     %   results  - A cell array with the grid search results for each combination
@@ -47,7 +46,7 @@ function [results, W1, W2, W1_train, W2_train] = grid_search(X, Y, val_X, val_Y,
                 % Call the function to train and evaluate the model with current parameters
                 [results, W1, W2, W1_train, W2_train] = bestDeflected(deflectedParams, ...
                                                  X, Y, val_X, val_Y, k, lambda, act_fun, ...
-                                                 act_fun_name, index, results, plots);
+                                                 act_fun_name, index, results);
                 index = index + 2;  
             end
         end
@@ -58,7 +57,7 @@ end
 
 function [results, W1, W2, W1_train, W2_train] = bestDeflected(params, X, Y, val_X, val_Y, ...
                                                   k, lambda, act_fun, act_fun_name, index, ...
-                                                  results, plots)
+                                                  results)
     % Trains a neural network using Deflected Subgradient 
     % method and evaluates its performance on both training and validation sets.
     %
@@ -74,7 +73,6 @@ function [results, W1, W2, W1_train, W2_train] = bestDeflected(params, X, Y, val
     %   act_fun_name - Name of the activation function (for storing in results).
     %   index        - Index to store the current combination results in the results array.
     %   results      - Cell array to store results.
-    %   plots        - Boolean flag to enable/disable plotting during training.
     %
     % OUTPUT:
     %   results    - Updated results cell array with training and validation evaluations.
@@ -101,7 +99,7 @@ function [results, W1, W2, W1_train, W2_train] = bestDeflected(params, X, Y, val
 
                 % Initialize the Deflected Subgradient object with training parameters
                 ds = DeflectedSubgradient(X, Y, nn.W2, delta, rho, R, ...
-                                        max_iter, nn.U, lambda, plots);
+                                        max_iter, nn.U, lambda);
                 % Optimize the network using Deflected Subgradient method
                 [x_opt, values_arrays, ds, status] = ds.compute_deflected_subgradient();
                 eval = ds.evaluate_f(x_opt); 

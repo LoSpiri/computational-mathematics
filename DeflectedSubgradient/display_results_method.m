@@ -1,8 +1,13 @@
-function display_results_method(results, X, Y, plot_results, plot_graphs)
+function display_results_method(results, X, Y, plot_results, plot_graphs, plot_descent)
 
     % Set default value for plot_graphs if not provided
     if nargin < 5
         plot_graphs = true;
+    end
+    
+    % Set default value for plot_descent if not provided
+    if nargin < 6
+        plot_descent = false;
     end
 
     % Convert results cell array to table for better visualization
@@ -31,13 +36,19 @@ function display_results_method(results, X, Y, plot_results, plot_graphs)
     % Plot iteration graphs if plot_graphs is true
     if plot_graphs
         plot_values_by_iteration(best_values_arrays);
-        plot_relative_error_by_iteration(best_values_arrays);
+        plot_delta_by_iteration(best_values_arrays);
+        %plot_relative_error_by_iteration(best_values_arrays);
         plot_log_relative_error_by_iteration(best_values_arrays);
+    end
+    
+    % Plot 2D representation of how method works
+    if plot_descent
         plot_descent(best_values_arrays, X, Y);
     end
 end
 
 
+%% f(x), ||d_i||^2, alpha and gamma values plot 
 function plot_values_by_iteration(values_arrays)
     figure;
     subplot(4,1,1);
@@ -67,6 +78,24 @@ function plot_values_by_iteration(values_arrays)
     ylabel('gamma');
 end
 
+%% delta and r values plot
+function plot_delta_by_iteration(values_arrays)
+    figure;
+    subplot(2,1,1);
+    plot(values_arrays.delta_values, 'LineWidth', 2);
+    title('Delta over Iterations');
+    xlabel('Iteration');
+    ylabel('delta');
+
+    subplot(2,1,2);
+    plot(values_arrays.r_values, 'LineWidth', 2);
+    title('r over Iterations');
+    xlabel('Iteration');
+    ylabel('r');
+
+end
+
+%% relative error linear scale plot ---> (not used)
 function plot_relative_error_by_iteration(values_arrays)
     num_iters = length(values_arrays.err_values);
     iter_numbers = 1:num_iters;
@@ -80,20 +109,31 @@ function plot_relative_error_by_iteration(values_arrays)
     drawnow;
 end
 
+%% relative error logarithmic scale 
 function plot_log_relative_error_by_iteration(values_arrays)
-    num_iters = length(values_arrays.err_values);    
+    % Numero di iterazioni
+    num_iters = length(values_arrays.err_values);
     iter_numbers = 1:num_iters;
+    
+    % Calcola il logaritmo dei valori dell'errore
+    log_err_values = log10(values_arrays.err_values); % Usa log10 per il logaritmo in base 10
+    
+    % Crea il grafico
     figure;
-    plot(iter_numbers, values_arrays.err_values, 'o-', 'LineWidth', 2, 'MarkerSize', 8);
-    set(gca, 'YScale', 'log');
+    plot(iter_numbers, log_err_values, 'o-', 'LineWidth', 2, 'MarkerSize', 2);
+    
+    % Etichette degli assi e titolo
     xlabel('Iteration Number');
-    ylabel('Relative Error');
-    title('Relative Error vs. Iteration (Logarithmic Scale)');
+    ylabel('Logarithm of Relative Error (log_{10})');
+    title('Logarithm of Relative Error vs. Iteration (Linear Scale)');
     grid on;
 
-    drawnow;
+    % Aggiorna il grafico
+    %drawnow;
 end
 
+
+%% 2D representation of how method works
 function plot_descent(values_arrays, X, Y)
     plot_surface(values_arrays.x_values{1}, X, Y);
     

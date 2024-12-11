@@ -25,8 +25,8 @@ datasets = struct(...
 
 % For testing method
 
-X = cup_x_train(1:200, :);
-Y = cup_y_train(1:200, :);
+X = cup_x_train(1:120, :);
+Y = cup_y_train(1:120, :);
 
 % For testing NN
 
@@ -54,21 +54,29 @@ deflectedParams=deflectedParameters();
 
 %% Grid search
 
-plot_results = true;
 [results, W1, W2, W1_train, W2_train] = grid_search(train_X, train_Y, validation_X, ...
-                                 validation_Y, modelParams, deflectedParams, false);
+                                 validation_Y, modelParams, deflectedParams);
 
 %% Method Analysis
 
+% Plot information about time execution
+plot_metric=false;
+% Plot informations about method
+plot_graphs=true;
+% Plot how method works in 2D
+plot_2D_method=false;
+
 sorted_results = sort_cell_matrix_by_column(results, 10, true);
-display_results_method(sorted_results(:, 1:12), X, Y, true);
+display_results_method(sorted_results(:, 1:12), X, Y, plot_metric, plot_graphs, plot_2D_method);
 
 %% NN Analysis
 
 % Sort results by Evaluation and display it
 sorted_results = sort_cell_matrix_by_column(results, 11, true);
-display_results_NN(sorted_results, true);
-%display(sorted_results(1, 1:end))
+
+% Plot information about NN
+plot_metric=false;
+display_results_NN(sorted_results, plot_metric);
  
 % Show results on test set and 
 test_results = testDeflected(sorted_results(1, 1:end), test_X, test_Y, W1, W2);
