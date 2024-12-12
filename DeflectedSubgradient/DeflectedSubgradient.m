@@ -1,14 +1,14 @@
 classdef DeflectedSubgradient
     
     properties
-        A
+        U
         b
         W2
         delta
         rho
         R
         max_iter
-        U
+        min_alpha
         lambda
         N
         f_ref
@@ -17,15 +17,15 @@ classdef DeflectedSubgradient
     
     methods
         %% Initialize properties
-        function obj = DeflectedSubgradient(A, b, W2, delta, rho, R, max_iter, U, lambda)
-            obj.A = A;
+        function obj = DeflectedSubgradient(U, b, W2, delta, rho, R, max_iter, min_alpha, lambda)
+            obj.U = U;
             obj.b = b;
             obj.W2 = W2;
             obj.delta = delta;
             obj.rho = rho;
             obj.R = R;
             obj.max_iter = max_iter;
-            obj.U = U;
+            obj.min_alpha=min_alpha;
             obj.lambda = lambda;
             obj.N = size(obj.U, 1);
             obj.f_ref = obj.evaluate_f(W2);
@@ -53,7 +53,7 @@ classdef DeflectedSubgradient
             x_values = cell(1, obj.max_iter);
 
             %Optimal result for relative error
-            y_bar =  0.018143;
+            y_bar =  0.017573;
 
             
             % Start iterating
@@ -170,12 +170,9 @@ classdef DeflectedSubgradient
             alpha_i = beta_i * (num / norm_d_i);
 
             % Introduce a lower bound for alpha_i
-            min_alpha = 1e-2;
-            if alpha_i < min_alpha
-                alpha_i = min_alpha;
-            end
-
-            if alpha_i > 1
+            if alpha_i < obj.min_alpha
+                alpha_i = obj.min_alpha;
+            elseif alpha_i > 1
                 alpha_i=1;
             end
         end

@@ -43,16 +43,15 @@ Y = cup_y_train(1:120, :);
 test_X = cup_x_test;
 test_Y = cup_y_test;
 
-%% Set the random number generator seed
-
-rng(17);
-
 %% Parameters Initialization
 
 modelParams=modelParameters();
 deflectedParams=deflectedParameters();
 
 %% Grid search
+
+% Set the random number generator seed
+rng(17);
 
 [results, W1, W2, W1_train, W2_train] = grid_search(train_X, train_Y, validation_X, ...
                                  validation_Y, modelParams, deflectedParams);
@@ -66,17 +65,19 @@ plot_graphs=true;
 % Plot how method works in 2D
 plot_2D_method=false;
 
-sorted_results = sort_cell_matrix_by_column(results, 10, true);
-display_results_method(sorted_results(:, 1:12), X, Y, plot_metric, plot_graphs, plot_2D_method);
+sorted_results = sort_cell_matrix_by_column(results, 11, true);
+display_results_method(sorted_results(:, 1:13), X, Y, plot_metric, plot_graphs, plot_2D_method);
 
 %% NN Analysis
 
 % Sort results by Evaluation and display it
-sorted_results = sort_cell_matrix_by_column(results, 11, true);
+sorted_results = sort_cell_matrix_by_column(results, 12, true);
 
 % Plot information about NN
 plot_metric=false;
-display_results_NN(sorted_results, plot_metric);
- 
-% Show results on test set and 
+% Plot information about all the results
+plot_summary=false;
+display_results_NN(sorted_results, plot_metric, plot_summary);
+
+% Show results on test set 
 test_results = testDeflected(sorted_results(1, 1:end), test_X, test_Y, W1, W2);
