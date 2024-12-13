@@ -24,6 +24,6 @@ function params = modelParameters()
     params.activation_functions = {@sigmoid};
     params.activation_functions_names = {'sigmoid'};
     params.k_values = [800];
-    params.lambda_values = [1e-3];
+    params.lambda_values = [1e-4];
  
 end
