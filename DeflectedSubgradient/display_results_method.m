@@ -96,6 +96,7 @@ function plot_delta_by_iteration(values_arrays)
     % Plot step size (alpha)
     subplot(3,1,2);
     plot(values_arrays.alpha_values, 'LineWidth', 2);
+    set(gca, 'YScale', 'log');
     title('Step Size over Iterations');
     xlabel('Iteration');
     ylabel('alpha');
@@ -103,6 +104,7 @@ function plot_delta_by_iteration(values_arrays)
     % Plot gamma values
     subplot(3,1,3);
     plot(values_arrays.gamma_values, 'LineWidth', 2);
+    set(gca, 'YScale', 'log');
     title('Gamma over Iterations');
     xlabel('Iteration');
     ylabel('gamma');
