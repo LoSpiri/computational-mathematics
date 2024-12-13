@@ -60,12 +60,12 @@ function display_results_method(results, X, Y, plot_results, plot_graphs, plot_d
 end
 
 
-%% Plot f_x, d_i, alpha and gamma over iterations
+%% Plot f_x and d_i over iterations
 function plot_values_by_iteration(values_arrays)
     figure;
 
     % Plot f_x values
-    subplot(4,1,1);
+    subplot(2,1,1);
     plot(values_arrays.f_values, 'LineWidth', 2);
     set(gca, 'YScale', 'log');
     title('Function Value over Iterations');
@@ -73,47 +73,39 @@ function plot_values_by_iteration(values_arrays)
     ylabel('f(x)');
     
     % Plot d values
-    subplot(4,1,2);
+    subplot(2,1,2);
     plot(values_arrays.d_values, 'LineWidth', 2);
     set(gca, 'YScale', 'log');
     title('d over Iterations');
     xlabel('Iteration');
     ylabel('d_i');
+end
+
+
+%% Plot delta alpha and gamma values over iterations
+function plot_delta_by_iteration(values_arrays)
+    figure;
+
+    % Plot delta values
+    subplot(3,1,1);
+    plot(values_arrays.delta_values, 'LineWidth', 2);
+    title('Delta over Iterations');
+    xlabel('Iteration');
+    ylabel('delta');
     
     % Plot step size (alpha)
-    subplot(4,1,3);
+    subplot(3,1,2);
     plot(values_arrays.alpha_values, 'LineWidth', 2);
     title('Step Size over Iterations');
     xlabel('Iteration');
     ylabel('alpha');
     
     % Plot gamma values
-    subplot(4,1,4);
+    subplot(3,1,3);
     plot(values_arrays.gamma_values, 'LineWidth', 2);
     title('Gamma over Iterations');
     xlabel('Iteration');
     ylabel('gamma');
-end
-
-
-%% Plot delta and r values over iterations
-function plot_delta_by_iteration(values_arrays)
-    figure;
-
-    % Plot delta values
-    subplot(2,1,1);
-    plot(values_arrays.delta_values, 'LineWidth', 2);
-    title('Delta over Iterations');
-    xlabel('Iteration');
-    ylabel('delta');
-    
-    % Plot r values
-    subplot(2,1,2);
-    plot(values_arrays.r_values, 'LineWidth', 2);
-    title('r over Iterations');
-    xlabel('Iteration');
-    ylabel('r');
-
 end
 
 %% Plot relative error in linear scale ---> (not used)

@@ -19,9 +19,9 @@ function params = deflectedParameters()
     % Initialize params as a struct
     params = struct();
 
-    params.delta_values = [1];
-    params.rho_values = [0.95];
-    params.R_values = [0.5];
+    params.delta_values = [0.8, 0.9, 1, 1.1, 1.2];
+    params.rho_values = [0.90, 0.95, 0.99];
+    params.R_values = [0.45, 0.5, 0.55];
     params.max_iter = [50000];
     params.min_alpha = [0.01];
     
@@ -29,7 +29,7 @@ function params = deflectedParameters()
     % params.delta_values = [0.1, 0.2, 0.5, 1, 2, 5];
     % params.rho_values = [0.1, 0.3, 0.5, 0.8, 0.9, 0.95, 0.99];
     % params.R_values = [0.3, 0.4, 0.5, 0.8, 1];
-    % params.max_iter = [100000];
+    % params.max_iter = [50000];
     % params.min_alpha = [0.01, 0.001, 0.0001];
 end
 

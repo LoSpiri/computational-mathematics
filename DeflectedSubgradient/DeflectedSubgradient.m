@@ -53,7 +53,7 @@ classdef DeflectedSubgradient
             x_values = cell(1, obj.max_iter);
 
             %Optimal result for relative error
-            y_bar =  0.017573;
+            y_bar =  0.017613;
 
             
             % Start iterating
