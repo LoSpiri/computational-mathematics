@@ -50,15 +50,9 @@ function [results, W1, W2, W1_train, W2_train] = grid_search(X, Y, val_X, val_Y,
         for k = modelParams.k_values
             for lambda = modelParams.lambda_values
 
-                % Initialize the neural network for training
-                nn = NeuralNetwork(X, k, size(X, 1), size(X, 2)); 
-                nn = nn.firstLayer(act_fun);  
-                nn = nn.secondLayer(size(Y,2));  
-
                 [results, W1, W2, W1_train, W2_train] = bestDeflected(deflectedParams, ...
                                                  X, Y, val_X, val_Y, k, lambda, act_fun, ...
-                                                 act_fun_name, index, results, num_iteration, ...
-                                                 nn.U, nn.W2, nn.W1);
+                                                 act_fun_name, index, results, num_iteration);
                 
                 % Update indices and iteration count
                 index = index + 2;
@@ -77,7 +71,7 @@ end
 
 function [results, W1, W2, W1_train, W2_train] = bestDeflected(params, X, Y, val_X, val_Y, ...
                                                   k, lambda, act_fun, act_fun_name, index, ...
-                                                  results, num_iteration, U_iniz, W2_iniz, W1_iniz)
+                                                  results, num_iteration)
     % Trains a neural network using Deflected Subgradient 
     % method and evaluates its performance on both training and validation sets.
     %
@@ -114,14 +108,14 @@ function [results, W1, W2, W1_train, W2_train] = bestDeflected(params, X, Y, val
                     for min_alpha = params.min_alpha
                 
                     %% Training step
-                    
-                     % Initialize the neural network for training
-                     nn = NeuralNetwork(X, k, size(X, 1), size(X, 2), W1_iniz, W2_iniz); 
-                     nn = nn.firstLayer(act_fun);  
-                     nn = nn.secondLayer(size(Y,2)); 
-
+    
+                    % Initialize the neural network for training
+                    nn = NeuralNetwork(X, k, size(X, 1), size(X, 2)); 
+                    nn = nn.firstLayer(act_fun);  
+                    nn = nn.secondLayer(size(Y,2));  
+    
                     % Initialize the Deflected Subgradient object with current parameters
-                    ds = DeflectedSubgradient(U_iniz, Y, W2_iniz, delta, rho, R, ...
+                    ds = DeflectedSubgradient(nn.U, Y, nn.W2, delta, rho, R, ...
                                             max_iter, min_alpha, lambda);
                     % Optimize the network using Deflected Subgradient method
                     [x_opt, values_arrays, ds, status] = ds.compute_deflected_subgradient();
@@ -130,7 +124,7 @@ function [results, W1, W2, W1_train, W2_train] = bestDeflected(params, X, Y, val
                     %% Validation step
     
                     % Initialize the neural network with trained W1 and the optimized W2
-                    val_nn = NeuralNetwork(val_X, k, size(val_X, 1), size(X, 2), W1_iniz, x_opt);
+                    val_nn = NeuralNetwork(val_X, k, size(val_X, 1), size(X, 2), nn.W1, x_opt);
                     val_nn = val_nn.firstLayer(act_fun);  
                     val_nn = val_nn.secondLayer(size(val_Y, 2));
 
@@ -142,7 +136,7 @@ function [results, W1, W2, W1_train, W2_train] = bestDeflected(params, X, Y, val
                     % Update best configuration based on validation performance
                     if validation_evaluation < temp
                         temp = validation_evaluation;  
-                        W1 = val_nn.W1;  
+                        W1 = nn.W1;  
                         W2 = x_opt; 
     
                         % Store validation results
@@ -165,7 +159,7 @@ function [results, W1, W2, W1_train, W2_train] = bestDeflected(params, X, Y, val
                     % Update best configuration based on training performance
                     if eval < temp_train
                         temp_train = eval;  
-                        W1_train = W1; 
+                        W1_train = nn.W1; 
                         W2_train = x_opt;  
     
                         % Store training results
