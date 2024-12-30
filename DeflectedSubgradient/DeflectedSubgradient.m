@@ -54,7 +54,7 @@ classdef DeflectedSubgradient
 
             %Optimal result for relative error
             y_bar =  0.017613;
-
+           
             
             % Start iterating
             for i = 1:obj.max_iter
